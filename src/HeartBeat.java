@@ -13,11 +13,13 @@ public class HeartBeat extends Thread {
 	
 	@Override
 	public void run() {
-		server.sendMessage("");
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		while (true) {
+			server.sendMessage("");
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

@@ -13,10 +13,12 @@ public class Server {
 
 	private MessageRepository repository;
 	private Waiter waiter;
+	private HeartBeat heartBeat;
 
 	public Server() {
 		repository = new MessageRepository();
-		waiter = new Waiter(new MessagingConnectionFactory(this), 39478);
+		waiter = new Waiter(new MessagingConnectionFactory(this), 36987);
+		heartBeat = new HeartBeat(this);
 	}
 
 	public void start() {
@@ -24,6 +26,7 @@ public class Server {
 			System.out.println(s);
 		}
 		waiter.start();
+		heartBeat.start();
 	}
 
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();
