@@ -41,6 +41,7 @@ public class Server {
 		System.out.println("SYSTEM: Connection removed: " + connection);
 		synchronized (connection) {
 			connections.remove(connection);
+			connection.terminate();
 		}
 	}
 
@@ -57,7 +58,12 @@ public class Server {
 	 * Called upon by MessagingConnection threads
 	 */
 	public void recieveMessage(String message) {
-		System.out.println(message);
+		System.out.println("RECIEVED MESSAGE: " + message);
+		/*
+		for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+			System.out.print(element + " ");
+		}
+		*/
 		repository.addMessage(message);
 		sendMessage(message);
 	}

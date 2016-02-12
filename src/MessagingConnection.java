@@ -10,10 +10,16 @@ public class MessagingConnection extends Thread {
 
 	private Server server;
 	private Socket socket;
+	private volatile boolean shouldContinueRunning = true;
 	
 	public MessagingConnection(Server server, Socket socket) {
+		super("Recieving thread for " + socket.getInetAddress());
 		this.server = server;
 		this.socket = socket;
+	}
+	
+	public void terminate() {
+		shouldContinueRunning = false;
 	}
 
 	@Override
@@ -27,8 +33,9 @@ public class MessagingConnection extends Thread {
 			e1.printStackTrace();
 		}
 		try {
-			while (true) {
-				server.recieveMessage(MessagingProtocol.readMessage(in));
+			while (shouldContinueRunning) {
+				String message = MessagingProtocol.readMessage(in);
+				if (message.length() > 0) server.recieveMessage(message);
 			}
 		} catch (IOException e) {
 			System.out.println("SYSTEM: Disconnected socket on connection: " + this);
