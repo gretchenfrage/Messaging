@@ -1,8 +1,8 @@
 package com.phoenixkahlo.messaging.client;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -10,14 +10,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
-public class ClientFrame extends JFrame implements ActionListener {
+public class ClientFrame extends JFrame implements KeyListener {
 	
 	private Client client;
 	
-	private JTextArea textArea;
-	private JTextField textField;
+	private JTextArea displayArea;
+	private JTextArea enterArea;
 	private JScrollBar scrollBar;
 	
 	public ClientFrame(Client client) {
@@ -31,26 +30,33 @@ public class ClientFrame extends JFrame implements ActionListener {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
-		// Create text area
-		textArea = new JTextArea();
-		textArea.setEditable(false);
+		// Create display area
+		displayArea = new JTextArea();
+		displayArea.setEditable(false);
+		displayArea.setLineWrap(true);
+		displayArea.setWrapStyleWord(true);
 		
-		// Wrap text area in scroll pane
-		JScrollPane scrollPane = new JScrollPane(textArea);
-		scrollBar = scrollPane.getVerticalScrollBar();
-		scrollPane.setPreferredSize(new Dimension(500, 500));
+		// Wrap display area in scroll pane
+		JScrollPane displayScrollPane = new JScrollPane(displayArea);
+		scrollBar = displayScrollPane.getVerticalScrollBar();
+		displayScrollPane.setPreferredSize(new Dimension(500, 500));
 		
-		// Add scroll pane
-		panel.add(scrollPane);
+		// Add display area scroll pane
+		panel.add(displayScrollPane);
 		
-		// Create text field
-		textField = new JTextField();
-		textField.addActionListener(this);
-		textField.setPreferredSize(new Dimension(500, 80));
-		textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+		// Create entering area
+		enterArea = new JTextArea();
+		enterArea.addKeyListener(this);
+		enterArea.setLineWrap(true);
+		enterArea.setWrapStyleWord(true);
 		
-		// Add text field
-		panel.add(textField);
+		// Wrap enter area in scroll pane
+		JScrollPane enterScrollPane = new JScrollPane(enterArea);
+		enterScrollPane.setPreferredSize(new Dimension(500, 80));
+		enterScrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+		
+		// Add enter area scroll pane
+		panel.add(enterScrollPane);
 		
 		// Add panel
 		add(panel);
@@ -65,15 +71,23 @@ public class ClientFrame extends JFrame implements ActionListener {
 	}
 	
 	public void println(String text) {
-		textArea.append(text + '\n');
-		scrollBar.setValue(scrollBar.getMaximum());
+		displayArea.append(text + '\n');
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent event) {
-		String message = textField.getText();
-		textField.setText("");
-		client.sendMessage(message);
+	public void keyPressed(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+			event.consume();
+			String message = enterArea.getText();
+			enterArea.setText("");
+			client.sendMessage(message);
+		}
 	}
+
+	@Override
+	public void keyReleased(KeyEvent event) {}
+
+	@Override
+	public void keyTyped(KeyEvent event) {}
 	
 }
