@@ -42,10 +42,6 @@ public class Server {
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();
 
 	public void addConnection(MessagingConnection connection) {
-		/*
-		System.out.println("Client connected: " + connection);
-		frame.println(connection + " connected");
-		*/
 		recieveMessage(connection + " connected");
 		connections.add(connection);
 		for (String s : repository.getAllMessages()) {

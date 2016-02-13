@@ -1,4 +1,5 @@
 package com.phoenixkahlo.messaging.server;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -35,10 +36,15 @@ public class MessageRepository {
 	
 	public void addMessage(String message) {
 		messages.add(message);
-		FileWriter writer = null;
+		//FileWriter writer = null;
+		BufferedWriter writer = null;
 		try {
-			writer = new FileWriter(file);
+			writer = new BufferedWriter(new FileWriter(file, true));
 			writer.write(message);
+			writer.newLine();
+			//writer = new FileWriter(file, true);
+			//BufferedWriter bw = new BufferedWriter(writer);
+			//writer.write(message);
 		} catch (IOException e) {
 			System.err.println("Failed to write to MessageRepository.txt");
 			e.printStackTrace();
