@@ -11,8 +11,8 @@ import com.phoenixkahlo.messaging.MessagingProtocol;
  */
 public class Client {
 	
-	public static final String IP = "localhost";
-	public static final int PORT = 36987;
+	public static final String IP = "71.87.82.153";
+	public static final int PORT = 39422;
 	
 	public static final boolean PRINT_DEBUG = false;
 	

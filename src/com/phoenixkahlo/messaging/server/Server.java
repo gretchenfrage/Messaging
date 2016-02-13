@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Server {
 
-	public static final int PORT = 36987;
+	public static final int PORT = 39422;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
