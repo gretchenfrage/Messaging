@@ -1,3 +1,4 @@
+package com.phoenixkahlo.messaging.client;
 import java.util.Scanner;
 
 /*
@@ -13,6 +14,8 @@ public class ClientPrompter extends Thread {
 	
 	@Override
 	public void run() {
+		if (Client.PRINT_DEBUG)
+			System.out.println("Launching ClientPrompter thread");
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
 			String input = scanner.nextLine();

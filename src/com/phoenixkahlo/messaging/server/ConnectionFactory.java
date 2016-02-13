@@ -1,3 +1,4 @@
+package com.phoenixkahlo.messaging.server;
 import java.net.Socket;
 
 /*

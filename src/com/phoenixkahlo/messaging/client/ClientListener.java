@@ -1,6 +1,9 @@
+package com.phoenixkahlo.messaging.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+
+import com.phoenixkahlo.messaging.MessagingProtocol;
 
 /*
  * Listens to a server for incoming messages
@@ -17,21 +20,18 @@ public class ClientListener extends Thread {
 	
 	@Override
 	public void run() {
-		System.out.println("SYSTEM: Launching ClientListener thread");
-		InputStream in = null;
+		if (Client.PRINT_DEBUG)
+			System.out.println("Launching ClientListener thread");
 		try {
-			in = socket.getInputStream();
-		} catch (IOException e) {
-			System.err.println("Failed to create InputStream from socket");
-			e.printStackTrace();
-		}
-		try {
+			InputStream in = socket.getInputStream();
 			while (true) {
 				String message = MessagingProtocol.readMessage(in);
 				if (message.length() > 0) client.recieveMessage(message);
 			}
 		} catch (IOException e) {
-			System.out.println("SYSTEM: Server disconnected");
+			System.err.println("Server disconnected");
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	

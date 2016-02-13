@@ -1,3 +1,4 @@
+package com.phoenixkahlo.messaging.server;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -6,6 +7,10 @@ import java.util.ArrayList;
  */
 public class Server {
 
+	public static final int PORT = 39422;
+	
+	public static final boolean PRINT_DEBUG = false;
+	
 	public static void main(String[] args) {
 		Server server = new Server();
 		server.start();
@@ -17,7 +22,7 @@ public class Server {
 
 	public Server() {
 		repository = new MessageRepository();
-		waiter = new Waiter(new MessagingConnectionFactory(this), 36987);
+		waiter = new Waiter(new MessagingConnectionFactory(this), PORT);
 		heartBeat = new HeartBeat(this);
 	}
 
@@ -27,12 +32,13 @@ public class Server {
 		}
 		waiter.start();
 		heartBeat.start();
+		System.out.println("~~~ MESSAGING SERVER STARTED~~~");
 	}
 
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();
 
 	public void addConnection(MessagingConnection connection) {
-		System.out.println("SYSTEM: Connection added: " + connection);
+		System.out.println("Client connected: " + connection);
 		connections.add(connection);
 		for (String s : repository.getAllMessages()) {
 			connection.sendMessage(s);
@@ -41,7 +47,7 @@ public class Server {
 	}
 	
 	public void removeConnection(MessagingConnection connection) {
-		System.out.println("SYSTEM: Connection removed: " + connection);
+		System.out.println("Client disconnected: " + connection);
 		synchronized (connection) {
 			connections.remove(connection);
 			connection.terminate();
@@ -61,12 +67,7 @@ public class Server {
 	 * Called upon by MessagingConnection threads
 	 */
 	public void recieveMessage(String message) {
-		System.out.println("RECIEVED MESSAGE: " + message);
-		/*
-		for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
-			System.out.print(element + " ");
-		}
-		*/
+		System.out.println(message);
 		repository.addMessage(message);
 		sendMessage(message);
 	}

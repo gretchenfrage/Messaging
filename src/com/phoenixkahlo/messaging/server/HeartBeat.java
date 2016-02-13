@@ -1,6 +1,7 @@
+package com.phoenixkahlo.messaging.server;
 
 /*
- * Continuouslly makes sure all the clients are still connected by sending them empty messages
+ * Continuously makes sure all the clients are still connected by sending them empty messages
  * These messages will be rejected on the client end for being empty
  */
 public class HeartBeat extends Thread {

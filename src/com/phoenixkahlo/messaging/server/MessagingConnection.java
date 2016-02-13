@@ -1,10 +1,14 @@
+package com.phoenixkahlo.messaging.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import com.phoenixkahlo.messaging.MessagingProtocol;
+
 /*
- * Represents a connection to a client. Waits on messages in its own thread, sends messages on Server thread
+ * Represents a connection to a client. Waits on messages in its own thread, sends
+ * messages on threads of other MessagingConnections that have received messages
  */
 public class MessagingConnection extends Thread {
 
@@ -24,21 +28,17 @@ public class MessagingConnection extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("SYSTEM: MessagingConnection thread started: " + this);
-		InputStream in = null;
+		if (Server.PRINT_DEBUG)
+			System.out.println("MessagingConnection thread started: " + this);
 		try {
-			in = socket.getInputStream();
-		} catch (IOException e) {
-			System.err.println("Failed to create InputStream from socket: " + this);
-			e.printStackTrace();
-		}
-		try {
+			InputStream in = socket.getInputStream();
 			while (shouldContinueRunning) {
 				String message = MessagingProtocol.readMessage(in);
-				if (message.length() > 0) server.recieveMessage(message);
+				if (message.length() > 0) server.recieveMessage(toString() + " > " + message);
 			}
 		} catch (IOException e) {
-			System.out.println("SYSTEM: Disconnected socket on connection: " + this);
+			if (Server.PRINT_DEBUG)
+				System.out.println("Disconnected socket on connection: " + this);
 			server.removeConnection(this);
 		}
 	}
@@ -48,14 +48,15 @@ public class MessagingConnection extends Thread {
 			OutputStream out = socket.getOutputStream();
 			MessagingProtocol.writeMessage(out, message);
 		} catch (IOException e) {
-			System.out.println("SYSTEM: Disconnected socket on connection: " + this);
+			if (Server.PRINT_DEBUG)
+				System.out.println("Disconnected socket on connection: " + this);
 			server.removeConnection(this);
 		}
 	}
 	
 	@Override
 	public String toString() {
-		return "connection to " + socket.getInetAddress();
+		return socket.getInetAddress().toString();
 	}
 
 }

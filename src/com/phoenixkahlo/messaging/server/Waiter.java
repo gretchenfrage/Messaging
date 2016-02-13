@@ -1,3 +1,4 @@
+package com.phoenixkahlo.messaging.server;
 import java.net.ServerSocket;
 import java.io.IOException;
 
@@ -14,7 +15,8 @@ public class Waiter extends Thread {
 		this.connectionFactory = connectionFactory;
 		try {
 			serverSocket = new ServerSocket(port);
-			System.out.println("SYSTEM: ServerSocket successfully bound to " + port);
+			if (Server.PRINT_DEBUG)
+				System.out.println("ServerSocket successfully bound to " + port);
 		} catch (IOException e) {
 			System.err.println("Failed to bind ServerSocket");
 			e.printStackTrace();
@@ -23,12 +25,15 @@ public class Waiter extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("SYSTEM: Waiter waiting");
+		if (Server.PRINT_DEBUG)
+			System.out.println("Waiter waiting");
 		while (true) {
 			try {
 				connectionFactory.createConnection(serverSocket.accept());
 			} catch (IOException e) {
+				System.err.println("Failed to accept socket");
 				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 	}
