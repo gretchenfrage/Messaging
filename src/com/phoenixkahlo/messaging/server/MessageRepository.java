@@ -36,15 +36,11 @@ public class MessageRepository {
 	
 	public void addMessage(String message) {
 		messages.add(message);
-		//FileWriter writer = null;
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(file, true));
 			writer.write(message);
 			writer.newLine();
-			//writer = new FileWriter(file, true);
-			//BufferedWriter bw = new BufferedWriter(writer);
-			//writer.write(message);
 		} catch (IOException e) {
 			System.err.println("Failed to write to MessageRepository.txt");
 			e.printStackTrace();

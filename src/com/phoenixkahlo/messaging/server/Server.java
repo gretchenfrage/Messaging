@@ -1,13 +1,14 @@
 package com.phoenixkahlo.messaging.server;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /*
  * Represents a complete, runnable messaging server
  */
 public class Server {
 
-	public static final int PORT = 39422;
+	public static final int PORT = 36987;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
@@ -71,6 +72,11 @@ public class Server {
 	 * Called upon by MessagingConnection threads
 	 */
 	public void recieveMessage(String message) {
+		Calendar calendar = Calendar.getInstance();
+		int hour = calendar.get(Calendar.HOUR_OF_DAY);
+		int minute = calendar.get(Calendar.MINUTE);
+		int second = calendar.get(Calendar.SECOND);
+		message = "[" + hour + ":" + minute + ":" + second + "] " + message;
 		System.out.println(message);
 		frame.println(message);
 		repository.addMessage(message);
