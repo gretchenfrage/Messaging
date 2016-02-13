@@ -28,9 +28,9 @@ public class MessagingConnection extends Thread {
 		InputStream in = null;
 		try {
 			in = socket.getInputStream();
-		} catch (IOException e1) {
+		} catch (IOException e) {
 			System.err.println("Failed to create InputStream from socket: " + this);
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
 		try {
 			while (shouldContinueRunning) {
