@@ -10,6 +10,7 @@ public class HeartBeat extends Thread {
 	
 	public HeartBeat(Server server) {
 		this.server = server;
+		setPriority(MAX_PRIORITY);
 	}
 	
 	@Override

@@ -31,6 +31,7 @@ public class Server {
 	public void start() {
 		for (String s : repository.getAllMessages()) {
 			System.out.println(s);
+			frame.println(s);
 		}
 		waiter.start();
 		heartBeat.start();
@@ -41,7 +42,11 @@ public class Server {
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();
 
 	public void addConnection(MessagingConnection connection) {
+		/*
 		System.out.println("Client connected: " + connection);
+		frame.println(connection + " connected");
+		*/
+		recieveMessage(connection + " connected");
 		connections.add(connection);
 		for (String s : repository.getAllMessages()) {
 			connection.sendMessage(s);
@@ -50,11 +55,11 @@ public class Server {
 	}
 	
 	public void removeConnection(MessagingConnection connection) {
-		System.out.println("Client disconnected: " + connection);
 		synchronized (connection) {
 			connections.remove(connection);
 			connection.terminate();
 		}
+		recieveMessage(connection + " disconnected");
 	}
 
 	/*
