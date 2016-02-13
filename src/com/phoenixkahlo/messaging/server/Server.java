@@ -19,11 +19,13 @@ public class Server {
 	private MessageRepository repository;
 	private Waiter waiter;
 	private HeartBeat heartBeat;
+	private ServerFrame frame;
 
 	public Server() {
 		repository = new MessageRepository();
 		waiter = new Waiter(new MessagingConnectionFactory(this), PORT);
 		heartBeat = new HeartBeat(this);
+		frame = new ServerFrame();
 	}
 
 	public void start() {
@@ -32,6 +34,7 @@ public class Server {
 		}
 		waiter.start();
 		heartBeat.start();
+		frame.start();
 		System.out.println("~~~ MESSAGING SERVER STARTED~~~");
 	}
 
@@ -68,6 +71,7 @@ public class Server {
 	 */
 	public void recieveMessage(String message) {
 		System.out.println(message);
+		frame.println(message);
 		repository.addMessage(message);
 		sendMessage(message);
 	}
