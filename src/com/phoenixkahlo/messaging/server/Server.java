@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.phoenixkahlo.messaging.server.commands.Nickname;
+import com.phoenixkahlo.messaging.utils.Waiter;
 
 /*
  * Represents a complete, runnable messaging server

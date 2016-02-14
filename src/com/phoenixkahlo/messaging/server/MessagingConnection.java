@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import com.phoenixkahlo.messaging.MessagingProtocol;
+import com.phoenixkahlo.messaging.utils.MessagingProtocol;
 
 /*
  * Represents a connection to a client. Waits on messages in its own thread, sends

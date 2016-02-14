@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import com.phoenixkahlo.messaging.MessagingProtocol;
+import com.phoenixkahlo.messaging.utils.MessagingProtocol;
 
 /*
  * Represents a complete, runnable messaging client

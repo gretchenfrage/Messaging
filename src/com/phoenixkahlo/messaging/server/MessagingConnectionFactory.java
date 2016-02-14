@@ -1,6 +1,8 @@
 package com.phoenixkahlo.messaging.server;
 import java.net.Socket;
 
+import com.phoenixkahlo.messaging.utils.ConnectionFactory;
+
 /*
  * A ConnectionFactory that produces MessagingConnections to represent client connections
  */

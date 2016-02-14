@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-import com.phoenixkahlo.messaging.MessagingProtocol;
+import com.phoenixkahlo.messaging.utils.MessagingProtocol;
 
 /*
  * Listens to a server for incoming messages
