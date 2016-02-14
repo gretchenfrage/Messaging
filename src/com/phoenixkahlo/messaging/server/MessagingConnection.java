@@ -34,7 +34,8 @@ public class MessagingConnection extends Thread {
 			InputStream in = socket.getInputStream();
 			while (shouldContinueRunning) {
 				String message = MessagingProtocol.readMessage(in);
-				if (message.length() > 0) server.recieveMessage(toString() + " > " + message);
+				// Sends exactly what the sender sent, nothing appended or prepended
+				if (message.length() > 0) server.recieveMessage(toString(), message);
 			}
 		} catch (IOException e) {
 			if (Server.PRINT_DEBUG)

@@ -3,12 +3,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.phoenixkahlo.messaging.server.commands.Nickname;
+
 /*
  * Represents a complete, runnable messaging server
  */
 public class Server {
 
-	public static final int PORT = 39422;
+	public static final int PORT = 36987;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
@@ -21,12 +23,16 @@ public class Server {
 	private Waiter waiter;
 	private HeartBeat heartBeat;
 	private ServerFrame frame;
+	private CommandExecuter commandExecuter;
+	private Nickname nicknames;
 
 	public Server() {
 		repository = new MessageRepository();
 		waiter = new Waiter(new MessagingConnectionFactory(this), PORT);
 		heartBeat = new HeartBeat(this);
 		frame = new ServerFrame();
+		commandExecuter = new CommandExecuter(this);
+		nicknames = (Nickname) commandExecuter.getCommand("nickname");
 	}
 
 	public void start() {
@@ -43,7 +49,7 @@ public class Server {
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();
 
 	public void addConnection(MessagingConnection connection) {
-		recieveMessage(connection + " connected");
+		createMessage(connection + " connected");
 		connections.add(connection);
 		for (String s : repository.getAllMessages()) {
 			connection.sendMessage(s);
@@ -56,7 +62,7 @@ public class Server {
 			connections.remove(connection);
 			connection.terminate();
 		}
-		recieveMessage(connection + " disconnected");
+		createMessage(connection + " disconnected");
 	}
 
 	/*
@@ -69,13 +75,34 @@ public class Server {
 	}
 
 	/*
-	 * Called upon by MessagingConnection threads
+	 * Called upon by MessagingConnection objects in their threads
+	 * Checks for and executes commands, or prints it, displays it, saves it to the repository, and sends it
+	 * Recieves exactly what the sender sent, nothing appended or prepended
 	 */
-	public void recieveMessage(String message) {
+	public void recieveMessage(String sender, String message) {
+		if (message.toCharArray()[0] == '/') {
+			commandExecuter.execute(sender, message);
+		} else {
+			if (nicknames.hasNickname(sender))
+				createMessage("(" + sender + ") " + nicknames.nicknameOf(sender) + " > " + message);
+			else 
+				createMessage(nicknames.nicknameOf(sender) + " > " + message);
+		}
+	}
+	
+	/*
+	 * Not to be called upon by MessagingConnection objects/regular user chat
+	 * Does not check for or execute commands
+	 * Takes what is inputted, gives it a timestamp, prints it, displays it, saves it to the repository, and sends it
+	 */
+	public void createMessage(String message) {
 		Calendar calendar = Calendar.getInstance();
-		int hour = calendar.get(Calendar.HOUR_OF_DAY);
-		int minute = calendar.get(Calendar.MINUTE);
-		int second = calendar.get(Calendar.SECOND);
+		String hour = Integer.toString(calendar.get(Calendar.HOUR_OF_DAY));
+		String minute = Integer.toString(calendar.get(Calendar.MINUTE));
+		String second = Integer.toString(calendar.get(Calendar.SECOND));
+		if (hour.length() < 2) hour = "0" + hour;
+		if (minute.length() < 2) minute = "0" + minute;
+		if (second.length() < 2) second = "0" + second;
 		message = "[" + hour + ":" + minute + ":" + second + "] " + message;
 		System.out.println(message);
 		frame.println(message);
