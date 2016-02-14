@@ -18,7 +18,6 @@ public class Client {
 	
 	private Socket socket;
 	private ClientListener listener;
-	private ClientPrompter prompter;
 	private ClientFrame frame;
 	
 	public static void main(String[] args) {
@@ -37,13 +36,11 @@ public class Client {
 			System.exit(1);
 		}
 		listener = new ClientListener(this, socket);
-		prompter = new ClientPrompter(this);
 		frame = new ClientFrame(this);
 	}
 	
 	public void start() {
 		listener.start();
-		prompter.start();
 		frame.start();
 		System.out.println("~~~ MESSAGING CLIENT STARTED ~~~");
 	}
