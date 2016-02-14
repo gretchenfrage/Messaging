@@ -20,6 +20,7 @@ public class Waiter extends Thread {
 		} catch (IOException e) {
 			System.err.println("Failed to bind ServerSocket");
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 

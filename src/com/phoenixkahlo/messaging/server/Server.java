@@ -10,7 +10,7 @@ import com.phoenixkahlo.messaging.server.commands.Nickname;
  */
 public class Server {
 
-	public static final int PORT = 14789;
+	public static final int PORT = 39422;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
@@ -47,6 +47,7 @@ public class Server {
 		heartBeat.start();
 		frame.start();
 		System.out.println("~~~ MESSAGING SERVER STARTED~~~");
+		frame.println("server started on port " + PORT);
 	}
 
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();

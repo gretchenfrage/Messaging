@@ -13,15 +13,8 @@ public class CommandExecuter {
 
 	private Map<String, Command> commands = new HashMap<String, Command>();
 	
-	public CommandExecuter(Server server) {
-		commands.put("nickname", new Nickname());
-	}
-	
-	/*
-	 * Returns the Command object mapped to the command String, which may be null
-	 */
-	public Command getCommand(String command) {
-		return commands.get(command);
+	public void addCommand(String name, Command command) {
+		commands.put(name, command);
 	}
 	
 	/*
