@@ -10,7 +10,7 @@ import com.phoenixkahlo.messaging.server.commands.Nickname;
  */
 public class Server {
 
-	public static final int PORT = 36987;
+	public static final int PORT = 14789;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
@@ -23,16 +23,19 @@ public class Server {
 	private Waiter waiter;
 	private HeartBeat heartBeat;
 	private ServerFrame frame;
+	
 	private CommandExecuter commandExecuter;
-	private Nickname nicknames;
+	private Nickname nickname;
 
 	public Server() {
 		repository = new MessageRepository();
 		waiter = new Waiter(new MessagingConnectionFactory(this), PORT);
 		heartBeat = new HeartBeat(this);
 		frame = new ServerFrame();
-		commandExecuter = new CommandExecuter(this);
-		nicknames = (Nickname) commandExecuter.getCommand("nickname");
+		
+		commandExecuter = new CommandExecuter();
+		nickname = new Nickname(this);
+		commandExecuter.addCommand("nickname", nickname);
 	}
 
 	public void start() {
@@ -49,12 +52,15 @@ public class Server {
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();
 
 	public void addConnection(MessagingConnection connection) {
-		createMessage(connection + " connected");
 		connections.add(connection);
 		for (String s : repository.getAllMessages()) {
 			connection.sendMessage(s);
 		}
 		connection.start();
+		if (nickname.hasNickname(connection.toString()))
+			createMessage("(" + connection + ") " + nickname.nicknameOf(connection.toString()) + " connected");
+		else
+			createMessage(connection + " connected");
 	}
 	
 	public void removeConnection(MessagingConnection connection) {
@@ -62,7 +68,10 @@ public class Server {
 			connections.remove(connection);
 			connection.terminate();
 		}
-		createMessage(connection + " disconnected");
+		if (nickname.hasNickname(connection.toString()))
+			createMessage("(" + connection + ") " + nickname.nicknameOf(connection.toString()) + " disconnected");
+		else
+			createMessage(connection + " disconnected");
 	}
 
 	/*
@@ -71,6 +80,13 @@ public class Server {
 	public void sendMessage(String message) {
 		for (int i = connections.size() - 1; i >= 0; i--) {
 			connections.get(i).sendMessage(message);
+		}
+	}
+	
+	public void sendTo(String targetIP, String message) {
+		for (int i = connections.size() - 1; i >= 0; i--) {
+			if (connections.get(i).toString().equals(targetIP))
+				connections.get(i).sendMessage(message);
 		}
 	}
 
@@ -83,10 +99,10 @@ public class Server {
 		if (message.toCharArray()[0] == '/') {
 			commandExecuter.execute(sender, message);
 		} else {
-			if (nicknames.hasNickname(sender))
-				createMessage("(" + sender + ") " + nicknames.nicknameOf(sender) + " > " + message);
+			if (nickname.hasNickname(sender))
+				createMessage("(" + sender + ") " + nickname.nicknameOf(sender) + " > " + message);
 			else 
-				createMessage(nicknames.nicknameOf(sender) + " > " + message);
+				createMessage(nickname.nicknameOf(sender) + " > " + message);
 		}
 	}
 	

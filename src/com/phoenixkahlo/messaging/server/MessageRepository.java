@@ -28,9 +28,8 @@ public class MessageRepository {
 			e.printStackTrace();
 			System.exit(1);
 		} finally {
-			if (scanner != null) {
+			if (scanner != null)
 				scanner.close();
-			}
 		}
 	}
 	
@@ -52,7 +51,6 @@ public class MessageRepository {
 				} catch (IOException e) {}
 			}
 		}
-		
 	}
 	
 	public String[] getAllMessages() {

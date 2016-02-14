@@ -51,7 +51,6 @@ public class Client {
 	public void recieveMessage(String message) {
 		System.out.println(message);
 		frame.println(message);
-		Toolkit.getDefaultToolkit().beep();
 	}
 	
 	public void sendMessage(String message) {
