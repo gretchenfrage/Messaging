@@ -13,10 +13,13 @@ import javax.swing.JTextArea;
 
 public class ClientFrame extends JFrame implements KeyListener {
 	
+	private static final long serialVersionUID = -4932951363118395533L;
+
 	private Client client;
 	
 	private JTextArea displayArea;
 	private JTextArea enterArea;
+	@SuppressWarnings("unused")
 	private JScrollBar scrollBar;
 	
 	public ClientFrame(Client client) {

@@ -1,5 +1,4 @@
 package com.phoenixkahlo.messaging.client;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -11,7 +10,7 @@ import com.phoenixkahlo.messaging.utils.MessagingProtocol;
  */
 public class Client {
 	
-	public static final String IP = "71.87.82.153";
+	public static final String IP = "localhost";//"71.87.82.153";
 	public static final int PORT = 39422;
 	
 	public static final boolean PRINT_DEBUG = false;

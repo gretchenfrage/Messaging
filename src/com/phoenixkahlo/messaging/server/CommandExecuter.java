@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.phoenixkahlo.messaging.server.commands.Command;
-import com.phoenixkahlo.messaging.server.commands.Nickname;
 
 /*
  * Called upon to execute commands when recieved messages beginning with a slash

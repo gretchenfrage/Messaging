@@ -8,6 +8,8 @@ import javax.swing.JTextArea;
 
 public class ServerFrame extends JFrame {
 
+	private static final long serialVersionUID = 3083411003324008560L;
+	
 	private JTextArea displayArea;
 	
 	public ServerFrame() {
