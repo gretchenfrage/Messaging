@@ -10,8 +10,8 @@ import com.phoenixkahlo.messaging.utils.MessagingProtocol;
  */
 public class Client {
 	
-	public static final String IP = "localhost";//"71.87.82.153";
-	public static final int PORT = 39422;
+	public static final String DEFAULT_IP = "71.87.82.153";
+	public static final int DEFAULT_PORT = 39422;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
@@ -20,15 +20,20 @@ public class Client {
 	private ClientFrame frame;
 	
 	public static void main(String[] args) {
-		Client client = new Client();
-		client.start();
+		if (args.length == 1) {
+			Client client = new Client(args[0].split(":")[0], Integer.parseInt(args[0].split(":")[1]));
+			client.start();
+		} else {
+			Client client = new Client(DEFAULT_IP, DEFAULT_PORT);
+			client.start();
+		}
 	}
 	
-	public Client() {
+	public Client(String ip, int port) {
 		if (PRINT_DEBUG)
 			System.out.println("Constructing client");
 		try {
-			socket = new Socket(IP, PORT);
+			socket = new Socket(ip, port);
 		} catch (IOException e) {
 			System.err.println("Failed to connect to server");
 			e.printStackTrace();

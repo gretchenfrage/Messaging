@@ -16,13 +16,18 @@ import com.phoenixkahlo.messaging.utils.Waiter;
  */
 public class UpdateServer {
 
-	public final int PORT = 39423;
-	public final int CURRENT_VERSION_NUMBER = 2;
+	public static final int DEFAULT_PORT = 39423;
+	public static final int CURRENT_VERSION_NUMBER = 2;
 	private byte[] dataToSend;
 	
 	public static void main(String[] args) {
-		UpdateServer server = new UpdateServer();
-		server.start();
+		if (args.length == 1) {
+			UpdateServer server = new UpdateServer();
+			server.start(Integer.parseInt(args[0]));
+		} else {
+			UpdateServer server = new UpdateServer();
+			server.start(DEFAULT_PORT);
+		}
 	}
 	
 	public UpdateServer() {
@@ -34,8 +39,9 @@ public class UpdateServer {
 			// Get the current version File
 			String currentVersionPath = Integer.toString(CURRENT_VERSION_NUMBER);
 			while (currentVersionPath.length() < 4) currentVersionPath = "0" + currentVersionPath;
-			currentVersionPath = "V" + currentVersionPath + ".jar";
+			currentVersionPath = "." + File.separator + "V" + currentVersionPath + ".jar";
 			File currentVersion = new File(currentVersionPath);
+			System.out.println("Looking for file at " + currentVersion.getAbsolutePath());
 			// Setup the jar length bytes
 			byte[] jarLengthBytes = BinOps.intToBytes((int) currentVersion.length());
 			// Setup the jar bytes
@@ -66,7 +72,7 @@ public class UpdateServer {
 		}
 	}
 	
-	public void start() {
+	public void start(int port) {
 		ConnectionFactory factory = new ConnectionFactory() {
 			@Override
 			public void createConnection(Socket socket) {
@@ -79,9 +85,9 @@ public class UpdateServer {
 				}
 			}
 		};
-		Waiter waiter = new Waiter(factory, PORT);
+		Waiter waiter = new Waiter(factory, port);
 		waiter.start();
-		System.out.println("Update server started");
+		System.out.println("Update server started on port " + port);
 	}
 	
 }

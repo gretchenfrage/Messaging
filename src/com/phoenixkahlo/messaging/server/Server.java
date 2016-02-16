@@ -11,13 +11,18 @@ import com.phoenixkahlo.messaging.utils.Waiter;
  */
 public class Server {
 
-	public static final int PORT = 39422;
+	public static final int DEFAULT_PORT = 39422;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
 	public static void main(String[] args) {
-		Server server = new Server();
-		server.start();
+		if (args.length == 1) {
+			Server server = new Server(Integer.parseInt(args[0]));
+			server.start();
+		} else {
+			Server server = new Server(DEFAULT_PORT);
+			server.start();
+		}
 	}
 
 	private MessageRepository repository;
@@ -28,9 +33,9 @@ public class Server {
 	private CommandExecuter commandExecuter;
 	private Nickname nickname;
 
-	public Server() {
+	public Server(int port) {
 		repository = new MessageRepository();
-		waiter = new Waiter(new MessagingConnectionFactory(this), PORT);
+		waiter = new Waiter(new MessagingConnectionFactory(this), port);
 		heartBeat = new HeartBeat(this);
 		frame = new ServerFrame();
 		
@@ -48,7 +53,7 @@ public class Server {
 		heartBeat.start();
 		frame.start();
 		System.out.println("~~~ MESSAGING SERVER STARTED~~~");
-		frame.println("server started on port " + PORT);
+		frame.println("server started on port " + DEFAULT_PORT);
 	}
 
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();

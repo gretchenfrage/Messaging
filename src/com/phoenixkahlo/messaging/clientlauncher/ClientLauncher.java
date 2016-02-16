@@ -12,21 +12,27 @@ import com.phoenixkahlo.messaging.utils.BinOps;
 
 public class ClientLauncher {
 	
-	public static final String IP = "localhost";//"71.87.82.153";
-	public static final int PORT = 39423;
+	public static final String DEFAULT_IP = "71.87.82.153";
+	public static final int DEFAULT_PORT = 39423;
 	
 	public static void main(String[] args) {
-		ClientLauncher launcher = new ClientLauncher();
-		launcher.start();
+		if (args.length == 1) {
+			ClientLauncher launcher = new ClientLauncher();
+			launcher.start(args[0].split(":")[0], Integer.parseInt(args[0].split(":")[1]));
+		} else {
+			ClientLauncher launcher = new ClientLauncher();
+			launcher.start(DEFAULT_IP, DEFAULT_PORT);
+		}
 	}
 	
-	public void start() {
+	public void start(String ip, int port) {
 		Socket socket = null;
 		OutputStream fileOut = null;
 		try {
 			// Open the connection, which will prompt the update server to send the data
 			// Data is [current version number, jar length, jar]
-			socket = new Socket(IP, PORT);
+			System.out.println("Attempting to connect to " + ip + ":" + port);
+			socket = new Socket(ip, port);
 			InputStream socketIn = socket.getInputStream();
 			// Get the current version number from the server
 			byte[] currentVersionNumberBytes = new byte[4];
