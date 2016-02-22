@@ -10,17 +10,17 @@ import java.net.Socket;
 import com.phoenixkahlo.messaging.utils.ApplicationDirectoryGetter;
 import com.phoenixkahlo.messaging.utils.BinOps;
 
-public class ClientLauncher {
+public class ClientLauncherOld {
 	
 	public static final String DEFAULT_IP = "71.87.82.153";
 	public static final int DEFAULT_PORT = 39423;
 	
 	public static void main(String[] args) {
 		if (args.length == 1) {
-			ClientLauncher launcher = new ClientLauncher();
+			ClientLauncherOld launcher = new ClientLauncherOld();
 			launcher.start(args[0].split(":")[0], Integer.parseInt(args[0].split(":")[1]));
 		} else {
-			ClientLauncher launcher = new ClientLauncher();
+			ClientLauncherOld launcher = new ClientLauncherOld();
 			launcher.start(DEFAULT_IP, DEFAULT_PORT);
 		}
 	}
