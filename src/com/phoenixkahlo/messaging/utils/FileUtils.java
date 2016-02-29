@@ -1,5 +1,6 @@
 package com.phoenixkahlo.messaging.utils;
 
+import java.io.File;
 import java.net.URISyntaxException;
 
 public class FileUtils {
@@ -19,6 +20,21 @@ public class FileUtils {
 			System.exit(1);
 			return null;
 		}
+	}
+	
+	/*
+	 * Returns a dedicated application directory path, dependent on the operating system
+	 */
+	public static String getAppDirPath(String folderName) {
+		String os = System.getProperty("os.name").toLowerCase();
+		if (os.contains("win"))
+			return System.getenv("APPDATA") + "\\" + folderName;
+		else if (os.contains("mac"))
+			return System.getProperty("user.home") + "/Library/Application Support/" + folderName;
+		else if (os.contains("nux"))
+			return System.getProperty("user.home") + "/." + folderName;
+		else
+			return System.getProperty("user.dir" + File.separator + folderName);
 	}
 	
 }

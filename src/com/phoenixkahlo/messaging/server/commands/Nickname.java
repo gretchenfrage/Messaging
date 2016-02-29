@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.phoenixkahlo.messaging.server.Server;
+import com.phoenixkahlo.messaging.utils.FileUtils;
 
 /*
  * Called when users execute the /nickname command
@@ -23,7 +24,7 @@ public class Nickname implements Command {
 	
 	public Nickname(Server server) {
 		this.server = server;
-		repository = new File("Nicknames.txt");
+		repository = new File(FileUtils.getParallelPath("Nicknames.txt"));
 		Scanner scanner = null;
 		try {
 			repository.createNewFile();

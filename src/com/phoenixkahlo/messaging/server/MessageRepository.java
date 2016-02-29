@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.phoenixkahlo.messaging.utils.FileUtils;
+
 /*
  * Stores messages and saves them in a file system
  */
@@ -16,7 +18,7 @@ public class MessageRepository {
 	private File file;
 	
 	public MessageRepository() {
-		file = new File("MessageRepository.txt");
+		file = new File(FileUtils.getParallelPath("MessageRepository.txt"));
 		Scanner scanner = null;
 		try {
 			file.createNewFile();

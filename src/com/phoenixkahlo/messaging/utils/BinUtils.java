@@ -6,9 +6,9 @@ import java.nio.charset.StandardCharsets;
 /*
  * Static class for binary operations
  */
-public class BinOps {
+public class BinUtils {
 
-	private BinOps() {}
+	private BinUtils() {}
 	
 	public static byte[] intToBytes(int n) {
 		return ByteBuffer.allocate(4).putInt(n).array();

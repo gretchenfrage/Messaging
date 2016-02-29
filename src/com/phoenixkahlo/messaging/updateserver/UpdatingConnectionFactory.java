@@ -6,17 +6,17 @@ import com.phoenixkahlo.messaging.utils.ConnectionFactory;
 
 public class UpdatingConnectionFactory implements ConnectionFactory {
 
-	private UpdateServer server;
+	private UpdatingFileCache fileCache;
 	
-	public UpdatingConnectionFactory(UpdateServer server) {
-		this.server = server;
+	public UpdatingConnectionFactory(UpdatingFileCache fileCache) {
+		this.fileCache = fileCache;
 	}
 	
 	@Override
 	public void createConnection(Socket socket) {
-		UpdatingConnection connection = new UpdatingConnection(socket);
-		server.addConnection(connection);
+		UpdatingConnection connection = new UpdatingConnection(socket, fileCache);
 		connection.start();
+		System.out.println("Client connected");
 	}
 	
 }

@@ -1,9 +1,6 @@
 package com.phoenixkahlo.messaging.utils;
-import java.net.ServerSocket;
-
-import com.phoenixkahlo.messaging.server.Server;
-
 import java.io.IOException;
+import java.net.ServerSocket;
 
 /*
  * Can be run to wait on a ServerSocket to accept clients and produce them through a ConnectionFactory
@@ -18,8 +15,7 @@ public class Waiter extends Thread {
 		this.connectionFactory = connectionFactory;
 		try {
 			serverSocket = new ServerSocket(port);
-			if (Server.PRINT_DEBUG)
-				System.out.println("ServerSocket successfully bound to " + port);
+			System.out.println("ServerSocket successfully bound to " + port);
 		} catch (IOException e) {
 			System.err.println("Failed to bind ServerSocket");
 			e.printStackTrace();
@@ -29,8 +25,7 @@ public class Waiter extends Thread {
 
 	@Override
 	public void run() {
-		if (Server.PRINT_DEBUG)
-			System.out.println("Waiter waiting");
+		System.out.println("Waiter waiting");
 		while (true) {
 			try {
 				connectionFactory.createConnection(serverSocket.accept());

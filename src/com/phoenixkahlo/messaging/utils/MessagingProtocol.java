@@ -6,15 +6,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /*
- * Static class for reading and writing messages in binary
+ * Static class for all the binary transmission protocols local to this messaging application
  */
 public class MessagingProtocol {
 
 	private MessagingProtocol() {}
 
 	public static void writeMessage(OutputStream out, String message) throws IOException {
-		byte[] body = BinOps.stringToBytes(message);
-		byte[] header = BinOps.intToBytes(body.length);
+		byte[] body = BinUtils.stringToBytes(message);
+		byte[] header = BinUtils.intToBytes(body.length);
 		out.write(header);
 		out.write(body);
 	}
@@ -22,9 +22,25 @@ public class MessagingProtocol {
 	public static String readMessage(InputStream in) throws IOException {
 		byte[] header = new byte[4];
 		in.read(header);
-		byte[] body = new byte[BinOps.bytesToInt(header)];
+		byte[] body = new byte[BinUtils.bytesToInt(header)];
 		in.read(body);
-		return BinOps.bytesToString(body);
+		return BinUtils.bytesToString(body);
+	}
+	
+	/*
+	 * Writes the array to the stream, prefixed with lenght
+	 */
+	public static void writeByteArray(byte[] array, OutputStream out) throws IOException {
+		out.write(BinUtils.intToBytes(array.length));
+		out.write(array);
+	}
+	
+	public static byte[] readByteArray(InputStream in) throws IOException {
+		byte[] head = new byte[4];
+		in.read(head);
+		byte[] body = new byte[BinUtils.bytesToInt(head)];
+		in.read(body);
+		return body;
 	}
 	
 	/*
@@ -42,7 +58,7 @@ public class MessagingProtocol {
 			in = new FileInputStream(file);
 			in.read(body);
 			
-			byte[] head = BinOps.intToBytes(body.length);
+			byte[] head = BinUtils.intToBytes(body.length);
 			
 			byte[] out = new byte[body.length + 4];
 			for (int i = 0; i < 4; i++) {
