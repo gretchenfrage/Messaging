@@ -19,7 +19,7 @@ public class ClientFrame extends JFrame implements KeyListener {
 	
 	private JTextArea displayArea;
 	private JTextArea enterArea;
-	@SuppressWarnings("unused")
+	@SuppressWarnings("unused") // For later implementation of autoscrolling
 	private JScrollBar scrollBar;
 	
 	public ClientFrame(Client client) {

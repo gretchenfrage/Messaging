@@ -1,15 +1,17 @@
 package com.phoenixkahlo.messaging.client;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import com.phoenixkahlo.messaging.utils.FileUtils;
 import com.phoenixkahlo.messaging.utils.MessagingProtocol;
 
 /*
  * Represents a complete, runnable messaging client
+ * Version 0002
  */
 public class Client {
-	
 	public static final String DEFAULT_IP = "71.87.82.153";
 	public static final int DEFAULT_PORT = 39422;
 	
@@ -34,10 +36,9 @@ public class Client {
 			System.out.println("Constructing client");
 		try {
 			socket = new Socket(ip, port);
+			socket.setSoTimeout(7_000);
 		} catch (IOException e) {
-			System.err.println("Failed to connect to server");
-			e.printStackTrace();
-			System.exit(1);
+			relaunch("Failed to connect to server", e);
 		}
 		listener = new ClientListener(this, socket);
 		frame = new ClientFrame(this);
@@ -59,10 +60,16 @@ public class Client {
 			OutputStream out = socket.getOutputStream();
 			MessagingProtocol.writeMessage(out, message);
 		} catch (IOException e) {
-			System.err.println("Server disconnected");
-			e.printStackTrace();
-			System.exit(1);
+			relaunch("Server disconnected", e);
 		}
+	}
+	
+	public static void relaunch(String reason, Exception exception) {
+		System.out.println(reason);
+		exception.printStackTrace();
+		File launcher = new File(FileUtils.getAppDirPath("Phoenix Messaging" + File.separator + "LAUNCHER.jar"));
+		FileUtils.launchJar(launcher);
+		System.exit(0);
 	}
 
 }

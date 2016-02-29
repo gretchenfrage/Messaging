@@ -103,7 +103,9 @@ public class Server {
 	 * Recieves exactly what the sender sent, nothing appended or prepended
 	 */
 	public void recieveMessage(String sender, String message) {
-		if (message.toCharArray()[0] == '/') {
+		if (message.isEmpty()) {
+			return;
+		} else if (message.toCharArray()[0] == '/') {
 			commandExecuter.execute(sender, message);
 		} else {
 			if (nickname.hasNickname(sender))

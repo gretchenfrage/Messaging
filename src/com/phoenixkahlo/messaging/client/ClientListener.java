@@ -29,9 +29,7 @@ public class ClientListener extends Thread {
 				if (message.length() > 0) client.recieveMessage(message);
 			}
 		} catch (IOException e) {
-			System.err.println("Server disconnected");
-			e.printStackTrace();
-			System.exit(1);
+			Client.relaunch("Server disconnected", e);
 		}
 	}
 	

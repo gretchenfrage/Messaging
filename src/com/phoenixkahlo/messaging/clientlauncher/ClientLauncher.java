@@ -75,7 +75,7 @@ public class ClientLauncher {
 		if (!client.exists())
 			writeTo(downloadCurrentVersionFileData(), client);
 		// Launch client
-		launchJar(client);
+		FileUtils.launchJar(client);
 	}
 	
 	/*
@@ -152,15 +152,6 @@ public class ClientLauncher {
 	/*
 	 * Launches the given jar file
 	 */
-	private void launchJar(File file) {
-		ProcessBuilder builder = new ProcessBuilder("java", "-jar", file.getAbsolutePath());
-		try {
-			builder.start();
-		} catch (IOException e) {
-			System.err.println("Unexpected IOException in jar launching");
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
+	
 	
 }

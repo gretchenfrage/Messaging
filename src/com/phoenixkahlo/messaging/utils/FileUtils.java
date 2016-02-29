@@ -1,6 +1,7 @@
 package com.phoenixkahlo.messaging.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class FileUtils {
@@ -35,6 +36,20 @@ public class FileUtils {
 			return System.getProperty("user.home") + "/." + folderName;
 		else
 			return System.getProperty("user.dir" + File.separator + folderName);
+	}
+	
+	/*
+	 * Launches the given jar file in a new process
+	 */
+	public static void launchJar(File jar) {
+		ProcessBuilder builder = new ProcessBuilder("java", "-jar", jar.getAbsolutePath());
+		try {
+			builder.start();
+		} catch (IOException e) {
+			System.err.println("Unexpected IOException in jar launching");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
 }
