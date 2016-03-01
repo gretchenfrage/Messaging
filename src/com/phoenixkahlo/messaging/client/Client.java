@@ -36,7 +36,6 @@ public class Client {
 			System.out.println("Constructing client");
 		try {
 			socket = new Socket(ip, port);
-			socket.setSoTimeout(7_000);
 		} catch (IOException e) {
 			relaunch("Failed to connect to server", e);
 		}
