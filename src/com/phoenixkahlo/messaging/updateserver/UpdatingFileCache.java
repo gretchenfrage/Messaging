@@ -8,7 +8,7 @@ import java.io.OutputStream;
 
 import com.phoenixkahlo.messaging.utils.BinUtils;
 import com.phoenixkahlo.messaging.utils.FileUtils;
-import com.phoenixkahlo.messaging.utils.MessagingProtocol;
+import com.phoenixkahlo.messaging.utils.Protocol;
 
 /*
  * Caches the files the client might request and is responsible for writing them to streams
@@ -43,11 +43,11 @@ public class UpdatingFileCache {
 	}
 	
 	public void writeClient(OutputStream out) throws IOException {
-		MessagingProtocol.writeByteArray(clientBytes, out);
+		Protocol.writeByteArray(clientBytes, out);
 	}
 	
 	public void writeLauncher(OutputStream out) throws IOException {
-		MessagingProtocol.writeByteArray(launcherBytes, out);
+		Protocol.writeByteArray(launcherBytes, out);
 	}
 	
 	public void writeCurrentVersionNumber(OutputStream out) throws IOException {

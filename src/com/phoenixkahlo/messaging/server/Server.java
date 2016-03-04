@@ -1,9 +1,9 @@
 package com.phoenixkahlo.messaging.server;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import com.phoenixkahlo.messaging.server.commands.Nickname;
+import com.phoenixkahlo.messaging.messagetypes.Message;
+import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.utils.Waiter;
 
 /*
@@ -11,7 +11,7 @@ import com.phoenixkahlo.messaging.utils.Waiter;
  */
 public class Server {
 
-	public static final int DEFAULT_PORT = 39422;
+	public static final int DEFAULT_PORT = 39424;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
@@ -27,99 +27,70 @@ public class Server {
 
 	private MessageRepository repository;
 	private Waiter waiter;
-	private HeartBeat heartBeat;
+	private HeartBeatSender heartBeat;
 	private ServerFrame frame;
-	
-	private CommandExecuter commandExecuter;
-	private Nickname nickname;
 
 	public Server(int port) {
 		repository = new MessageRepository();
 		waiter = new Waiter(new MessagingConnectionFactory(this), port);
-		heartBeat = new HeartBeat(this);
+		heartBeat = new HeartBeatSender(this);
 		frame = new ServerFrame();
-		
-		commandExecuter = new CommandExecuter();
-		nickname = new Nickname(this);
-		commandExecuter.addCommand("nickname", nickname);
 	}
 
 	public void start() {
-		for (String s : repository.getAllMessages()) {
-			System.out.println(s);
-			frame.println(s);
+		for (MessageOld m : repository.getAllMessages()) {
+			System.out.println(m);
+			frame.addMessage(m);
 		}
 		waiter.start();
 		heartBeat.start();
 		frame.start();
 		System.out.println("~~~ MESSAGING SERVER STARTED~~~");
-		frame.println("server started on port " + DEFAULT_PORT);
 	}
 
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();
 
+	/*
+	 * Called upon by waiter thread when new connections are accepted
+	 */
 	public void addConnection(MessagingConnection connection) {
 		connections.add(connection);
-		for (String s : repository.getAllMessages()) {
-			connection.sendMessage(s);
+		for (MessageOld m : repository.getAllMessages()) {
+			connection.send(m);
 		}
 		connection.start();
-		if (nickname.hasNickname(connection.toString()))
-			createMessage("(" + connection + ") " + nickname.nicknameOf(connection.toString()) + " connected");
-		else
-			createMessage(connection + " connected");
+		//TODO: implement joined the chat message
 	}
 	
+	/*
+	 * Called upon by the connections themselves, after recieving an IOException as a result of disconnection
+	 */
 	public void removeConnection(MessagingConnection connection) {
 		synchronized (connection) {
 			connections.remove(connection);
 			connection.terminate();
 		}
-		if (nickname.hasNickname(connection.toString()))
-			createMessage("(" + connection + ") " + nickname.nicknameOf(connection.toString()) + " disconnected");
-		else
-			createMessage(connection + " disconnected");
+		//TODO: implement left the chat message
 	}
 
 	/*
 	 * Sends message to all connected clients
 	 */
-	public void sendMessage(String message) {
+	public void send(Sendable sendable) {
 		for (int i = connections.size() - 1; i >= 0; i--) {
-			connections.get(i).sendMessage(message);
-		}
-	}
-	
-	public void sendTo(String targetIP, String message) {
-		for (int i = connections.size() - 1; i >= 0; i--) {
-			if (connections.get(i).toString().equals(targetIP))
-				connections.get(i).sendMessage(message);
-		}
-	}
-
-	/*
-	 * Called upon by MessagingConnection objects in their threads
-	 * Checks for and executes commands, or prints it, displays it, saves it to the repository, and sends it
-	 * Recieves exactly what the sender sent, nothing appended or prepended
-	 */
-	public void recieveMessage(String sender, String message) {
-		if (message.isEmpty()) {
-			return;
-		} else if (message.toCharArray()[0] == '/') {
-			commandExecuter.execute(sender, message);
-		} else {
-			if (nickname.hasNickname(sender))
-				createMessage("(" + sender + ") " + nickname.nicknameOf(sender) + " > " + message);
-			else 
-				createMessage(nickname.nicknameOf(sender) + " > " + message);
+			connections.get(i).send(sendable);
 		}
 	}
 	
 	/*
-	 * Not to be called upon by MessagingConnection objects/regular user chat
-	 * Does not check for or execute commands
-	 * Takes what is inputted, gives it a timestamp, prints it, displays it, saves it to the repository, and sends it
+	 * Called upon by MessagingConnection threads after recieving message from client
 	 */
+	public void recieveMessage(Message message) {
+		frame.addComponent(message.toComponent());
+		repository.addMessage(message);
+		send(message);
+	}
+	/*
 	public void createMessage(String message) {
 		Calendar calendar = Calendar.getInstance();
 		String hour = Integer.toString(calendar.get(Calendar.HOUR_OF_DAY));
@@ -134,5 +105,6 @@ public class Server {
 		repository.addMessage(message);
 		sendMessage(message);
 	}
+	*/
 
 }

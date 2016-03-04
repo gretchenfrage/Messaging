@@ -8,24 +8,19 @@ import java.io.OutputStream;
 /*
  * Static class for all the binary transmission protocols local to this messaging application
  */
-public class MessagingProtocol {
+public class Protocol {
 
-	private MessagingProtocol() {}
+	private Protocol() {}
 
-	public static void writeMessage(OutputStream out, String message) throws IOException {
-		byte[] body = BinUtils.stringToBytes(message);
-		byte[] header = BinUtils.intToBytes(body.length);
-		out.write(header);
-		out.write(body);
-	}
+	public static final String APP_DIR_NAME = "Phoenix Messaging";
 	
-	public static String readMessage(InputStream in) throws IOException {
-		byte[] header = new byte[4];
-		in.read(header);
-		byte[] body = new byte[BinUtils.bytesToInt(header)];
-		in.read(body);
-		return BinUtils.bytesToString(body);
-	}
+	public static final int CURRENT_VERSION_NUMBER_REQUEST = 0;
+	public static final int CURRENT_VERSION_FILE_REQUEST = 1;
+	public static final int LAUNCHER_FILE_REQUEST = 2;
+	
+	public static final int TEXT_MESSAGE_HEADER = 0;
+	public static final int HEARTBEAT_HEADER = 1;
+	public static final int COMMAND_HEADER = 2;
 	
 	/*
 	 * Writes the array to the stream, prefixed with lenght
@@ -41,6 +36,14 @@ public class MessagingProtocol {
 		byte[] body = new byte[BinUtils.bytesToInt(head)];
 		in.read(body);
 		return body;
+	}
+	
+	public static void writeString(String string, OutputStream out) throws IOException {
+		writeByteArray(BinUtils.stringToBytes(string), out);
+	}
+	
+	public static String readString(InputStream in) throws IOException {
+		return BinUtils.bytesToString(readByteArray(in));
 	}
 	
 	/*

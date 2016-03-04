@@ -1,16 +1,21 @@
 package com.phoenixkahlo.messaging.server;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+
+import org.jfree.ui.tabbedui.VerticalLayout;
+
+import com.phoenixkahlo.messaging.utils.ScrollablePanel;
 
 public class ServerFrame extends JFrame {
 
-	private static final long serialVersionUID = 3083411003324008560L;
-	
-	private JTextArea displayArea;
+	private static final long serialVersionUID = -3811769629075136691L;
+
+	private ScrollablePanel displayArea;
 	
 	public ServerFrame() {
 		// Create frame
@@ -18,29 +23,30 @@ public class ServerFrame extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		// Create display area
-		displayArea = new JTextArea();
-		displayArea.setEditable(false);
-		displayArea.setLineWrap(true);
-		displayArea.setWrapStyleWord(true);
+		displayArea = new ScrollablePanel(new VerticalLayout());
+		displayArea.setScrollableWidth(ScrollablePanel.ScrollableSizeHint.FIT);
+		displayArea.setBackground(Color.WHITE);
 		
 		// Wrap display area in scroll pane
-		JScrollPane displayScrollPane = new JScrollPane(displayArea);
-		displayScrollPane.setPreferredSize(new Dimension(500, 500));
+		JScrollPane scrollPane = new JScrollPane(displayArea);
+		scrollPane.setPreferredSize(new Dimension(500, 500));
 		
-		// Add display area scroll pane
-		add(displayScrollPane);
+		// Add scroll pane
+		add(scrollPane);
 		
 		// Pack and center
 		pack();
 		setLocationRelativeTo(null);
 	}
 	
-	public void start() {
-		setVisible(true);
+	public void addComponent(Component component) {
+		displayArea.add(component);
+		displayArea.revalidate();
+		displayArea.repaint();
 	}
 	
-	public void println(String text) {
-		displayArea.append(text + '\n');
+	public void start() {
+		setVisible(true);
 	}
 	
 }

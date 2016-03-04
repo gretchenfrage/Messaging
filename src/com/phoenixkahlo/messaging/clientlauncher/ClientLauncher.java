@@ -9,8 +9,7 @@ import java.net.Socket;
 
 import com.phoenixkahlo.messaging.utils.BinUtils;
 import com.phoenixkahlo.messaging.utils.FileUtils;
-import com.phoenixkahlo.messaging.utils.MessagingProtocol;
-import com.phoenixkahlo.messaging.utils.UpdatingConstants;
+import com.phoenixkahlo.messaging.utils.Protocol;
 
 /*
  * An object that can be used to attempt to launch the client
@@ -64,10 +63,10 @@ public class ClientLauncher {
 	 */
 	public void start() throws IOException {
 		// Ensure app directory exists
-		File directory = new File(FileUtils.getAppDirPath("Phoenix Messaging"));
+		File directory = new File(FileUtils.getAppDirPath(Protocol.APP_DIR_NAME));
 		directory.mkdirs();
 		// Ensure launcher is installed
-		File launcher = new File(FileUtils.getAppDirPath("Phoenix Messaging" + File.separator + "LAUNCHER.jar"));
+		File launcher = new File(FileUtils.getAppDirPath(Protocol.APP_DIR_NAME + File.separator + "LAUNCHER.jar"));
 		if (!launcher.exists())
 			writeTo(downloadLauncherFileData(), launcher);
 		// Ensure client is installed
@@ -84,7 +83,7 @@ public class ClientLauncher {
 	private int downloadCurrentVersionNumber() throws IOException {
 		// Request
 		OutputStream out = socket.getOutputStream();
-		out.write(UpdatingConstants.CURRENT_VERSION_NUMBER_REQUEST);
+		out.write(Protocol.CURRENT_VERSION_NUMBER_REQUEST);
 		// Download
 		InputStream in = socket.getInputStream();
 		byte[] bytes = new byte[4];
@@ -99,10 +98,10 @@ public class ClientLauncher {
 	private byte[] downloadCurrentVersionFileData() throws IOException {
 		// Request
 		OutputStream out = socket.getOutputStream();
-		out.write(UpdatingConstants.CURRENT_VERSION_FILE_REQUEST);
+		out.write(Protocol.CURRENT_VERSION_FILE_REQUEST);
 		//Download
 		InputStream in = socket.getInputStream();
-		byte[] data = MessagingProtocol.readByteArray(in);
+		byte[] data = Protocol.readByteArray(in);
 		// Return
 		return data;
 	}
@@ -113,10 +112,10 @@ public class ClientLauncher {
 	private byte[] downloadLauncherFileData() throws IOException {
 		// Request
 		OutputStream out = socket.getOutputStream();
-		out.write(UpdatingConstants.LAUNCHER_FILE_REQUEST);
+		out.write(Protocol.LAUNCHER_FILE_REQUEST);
 		// Download
 		InputStream in = socket.getInputStream();
-		byte[] data = MessagingProtocol.readByteArray(in);
+		byte[] data = Protocol.readByteArray(in);
 		// Return
 		return data;
 	}
@@ -127,7 +126,7 @@ public class ClientLauncher {
 	private File getVersionFile(int version) {
 		String fileID = Integer.toString(version);
 		while (fileID.length() < 4) fileID = '0' + fileID;
-		return new File(FileUtils.getAppDirPath("Phoenix Messaging" + File.separator + 'V' + fileID + ".jar"));
+		return new File(FileUtils.getAppDirPath(Protocol.APP_DIR_NAME + File.separator + 'V' + fileID + ".jar"));
 	}
 	
 	/*

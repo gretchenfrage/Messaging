@@ -1,5 +1,6 @@
-package com.phoenixkahlo.messaging.server;
+package com.phoenixkahlo.messaging.utils;
 
+import com.phoenixkahlo.messaging.server.Server;
 import com.phoenixkahlo.messaging.updateserver.UpdatingServer;
 
 /*

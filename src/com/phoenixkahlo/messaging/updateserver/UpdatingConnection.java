@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import com.phoenixkahlo.messaging.utils.UpdatingConstants;
+import com.phoenixkahlo.messaging.utils.Protocol;
 
 public class UpdatingConnection extends Thread {
 	
@@ -24,11 +24,11 @@ public class UpdatingConnection extends Thread {
 			OutputStream out = socket.getOutputStream();
 			while (true) {
 				int request = in.read();
-				if (request == UpdatingConstants.CURRENT_VERSION_NUMBER_REQUEST) {
+				if (request == Protocol.CURRENT_VERSION_NUMBER_REQUEST) {
 					fileCache.writeCurrentVersionNumber(out);
-				} else if (request == UpdatingConstants.CURRENT_VERSION_FILE_REQUEST) {
+				} else if (request == Protocol.CURRENT_VERSION_FILE_REQUEST) {
 					fileCache.writeClient(out);
-				} else if (request == UpdatingConstants.LAUNCHER_FILE_REQUEST) {
+				} else if (request == Protocol.LAUNCHER_FILE_REQUEST) {
 					fileCache.writeLauncher(out);
 				}
 			}

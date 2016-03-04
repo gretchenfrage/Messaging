@@ -4,16 +4,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import com.phoenixkahlo.messaging.messagetypes.Message;
+import com.phoenixkahlo.messaging.messagetypes.MessageOld;
 import com.phoenixkahlo.messaging.utils.FileUtils;
-import com.phoenixkahlo.messaging.utils.MessagingProtocol;
+import com.phoenixkahlo.messaging.utils.Protocol;
 
 /*
  * Represents a complete, runnable messaging client
  * Version 0002
  */
 public class Client {
+	
 	public static final String DEFAULT_IP = "71.87.82.153";
-	public static final int DEFAULT_PORT = 39422;
+	public static final int DEFAULT_PORT = 39424;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
@@ -32,8 +35,7 @@ public class Client {
 	}
 	
 	public Client(String ip, int port) {
-		if (PRINT_DEBUG)
-			System.out.println("Constructing client");
+		System.out.println("Constructing client");
 		try {
 			socket = new Socket(ip, port);
 		} catch (IOException e) {
@@ -49,15 +51,15 @@ public class Client {
 		System.out.println("~~~ MESSAGING CLIENT STARTED ~~~");
 	}
 	
-	public void recieveMessage(String message) {
+	public void recieveMessage(Message message) {
 		System.out.println(message);
-		frame.println(message);
+		frame.addMessage(message.toComponent());
 	}
 	
-	public void sendMessage(String message) {
+	public void sendMessage(MessageOld message) {
 		try {
 			OutputStream out = socket.getOutputStream();
-			MessagingProtocol.writeMessage(out, message);
+			message.write(out);
 		} catch (IOException e) {
 			relaunch("Server disconnected", e);
 		}
@@ -66,7 +68,7 @@ public class Client {
 	public static void relaunch(String reason, Exception exception) {
 		System.out.println(reason);
 		exception.printStackTrace();
-		File launcher = new File(FileUtils.getAppDirPath("Phoenix Messaging" + File.separator + "LAUNCHER.jar"));
+		File launcher = new File(FileUtils.getAppDirPath(Protocol.APP_DIR_NAME + File.separator + "LAUNCHER.jar"));
 		FileUtils.launchJar(launcher);
 		System.exit(0);
 	}

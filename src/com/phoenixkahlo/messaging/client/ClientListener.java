@@ -3,7 +3,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-import com.phoenixkahlo.messaging.utils.MessagingProtocol;
+import com.phoenixkahlo.messaging.messagetypes.MessageOld;
+import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 
 /*
  * Listens to a server for incoming messages
@@ -20,13 +21,12 @@ public class ClientListener extends Thread {
 	
 	@Override
 	public void run() {
-		if (Client.PRINT_DEBUG)
-			System.out.println("Launching ClientListener thread");
+		System.out.println("Launching ClientListener thread");
 		try {
 			InputStream in = socket.getInputStream();
 			while (true) {
-				String message = MessagingProtocol.readMessage(in);
-				if (message.length() > 0) client.recieveMessage(message);
+				MessageOld message = SendableCoder.readMessage(in);
+				if (message != null) client.recieveMessage(message);
 			}
 		} catch (IOException e) {
 			Client.relaunch("Server disconnected", e);
