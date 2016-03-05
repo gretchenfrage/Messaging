@@ -6,18 +6,22 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import com.phoenixkahlo.messaging.utils.BiMap;
-import com.phoenixkahlo.messaging.utils.Protocol;
 
 /*
  * Responsible for reading and writing Sendables in a continuous stream, preceeding them with headers
  */
 public class SendableCoder {
-
+	
+	public static final int TEXT_MESSAGE_HEADER = 0;
+	public static final int PULSE_HEADER = 1;
+	public static final int RAW_TEXT_MESSAGE_HEADER = 2;
+	
 	private BiMap<Integer, Class<? extends Sendable>> map = new BiMap<Integer, Class<? extends Sendable>>();
 	
 	public SendableCoder() {
-		map.link(Protocol.TEXT_MESSAGE_HEADER, TextMessage.class);
-		map.link(Protocol.HEARTBEAT_HEADER, Pulse.class);
+		map.link(TEXT_MESSAGE_HEADER, TextMessage.class);
+		map.link(PULSE_HEADER, Pulse.class);
+		map.link(RAW_TEXT_MESSAGE_HEADER, RawTextMessage.class);
 	}
 	
 	public Sendable read(InputStream in) throws IOException {

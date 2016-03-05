@@ -18,10 +18,6 @@ public class Protocol {
 	public static final int CURRENT_VERSION_FILE_REQUEST = 1;
 	public static final int LAUNCHER_FILE_REQUEST = 2;
 	
-	public static final int TEXT_MESSAGE_HEADER = 0;
-	public static final int HEARTBEAT_HEADER = 1;
-	public static final int COMMAND_HEADER = 2;
-	
 	/*
 	 * Writes the array to the stream, prefixed with lenght
 	 */

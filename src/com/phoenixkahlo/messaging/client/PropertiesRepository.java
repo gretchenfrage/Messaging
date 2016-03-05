@@ -31,8 +31,21 @@ public class PropertiesRepository {
 		return properties.getProperty(key);
 	}
 	
+	public String get(String key, String defaultValue) {
+		return properties.getProperty(key, defaultValue);
+	}
+	
 	public void set(String key, String value) throws IOException {
 		properties.setProperty(key, value);
+		save();
+	}
+	
+	public void remove(String key) throws IOException {
+		properties.remove(key);
+		save();
+	}
+	
+	private void save() throws IOException {
 		OutputStream out = new FileOutputStream(file);
 		properties.store(out, "");
 	}

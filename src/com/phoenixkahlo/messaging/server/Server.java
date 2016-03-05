@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.phoenixkahlo.messaging.messagetypes.Message;
+import com.phoenixkahlo.messaging.messagetypes.RawTextMessage;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 import com.phoenixkahlo.messaging.utils.Waiter;
@@ -12,7 +13,7 @@ import com.phoenixkahlo.messaging.utils.Waiter;
  */
 public class Server {
 
-	public static final int DEFAULT_PORT = 39424;
+	public static final int DEFAULT_PORT = 39422;
 	
 	public static void main(String[] args) {
 		if (args.length == 1) {
@@ -41,7 +42,7 @@ public class Server {
 	public void start() {
 		for (Message m : repository.getAllMessages()) {
 			System.out.println(m);
-			frame.add(m.toComponent());
+			frame.addComponent(m.toComponent());
 		}
 		waiter.start();
 		heartBeat.start();
@@ -60,7 +61,7 @@ public class Server {
 			connection.send(m);
 		}
 		connection.start();
-		//TODO: implement joined the chat message
+		recieveMessage(new RawTextMessage(connection.getIP() + " joined the chat"));
 	}
 	
 	/*
@@ -71,7 +72,7 @@ public class Server {
 			connections.remove(connection);
 			connection.terminate();
 		}
-		//TODO: implement left the chat message
+		recieveMessage(new RawTextMessage(connection.getIP() + " left the chat"));
 	}
 
 	/*
@@ -88,6 +89,7 @@ public class Server {
 	 * Called upon by MessagingConnection threads after receiving message from client
 	 */
 	public void recieveMessage(Message message) {
+		System.out.println(message);
 		frame.addComponent(message.toComponent());
 		repository.addMessage(message);
 		send(message);

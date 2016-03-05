@@ -10,7 +10,7 @@ import com.phoenixkahlo.messaging.utils.Waiter;
 public class UpdatingServer {
 	
 	public static final int DEFAULT_PORT = 39423;
-	public static final int CURRENT_VERSION_NUMBER = 3;
+	public static final int CURRENT_VERSION_NUMBER = 4;
 	
 	private Waiter waiter;
 	private UpdatingFileCache fileCache;

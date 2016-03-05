@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -13,6 +15,8 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.phoenixkahlo.messaging.client.commands.BadCommandException;
+import com.phoenixkahlo.messaging.client.commands.ClientCommandExecuter;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.TextMessage;
 import com.phoenixkahlo.messaging.utils.ScrollablePanel;
@@ -23,19 +27,23 @@ public class ClientFrame extends JFrame implements KeyListener {
 	private static final long serialVersionUID = -4932951363118395533L;
 
 	private Client client;
+	private PropertiesRepository properties;
+	private ClientCommandExecuter commandExecuter;
 	
 	private ScrollablePanel displayArea;
 	private JTextArea enterArea;
 	@SuppressWarnings("unused") // For later implementation of autoscrolling
 	private JScrollBar scrollBar;
 	
-	public ClientFrame(Client client) {
+	public ClientFrame(Client client, PropertiesRepository properties, ClientCommandExecuter commandExecuter) {
 		// Create frame
 		super("Messaging Client");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		// Memorize client
+		// Memorize args
 		this.client = client;
+		this.properties = properties;
+		this.commandExecuter = commandExecuter;
 		
 		// Create main panel
 		JPanel mainPanel = new JPanel();
@@ -91,9 +99,25 @@ public class ClientFrame extends JFrame implements KeyListener {
 	public void keyPressed(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 			event.consume();
-			Sendable message = new TextMessage("", enterArea.getText());
+			String text = enterArea.getText();
 			enterArea.setText("");
-			client.send(message);
+			if (text.toCharArray()[0] == '/') {
+				try {
+					commandExecuter.parse(text);
+				} catch (BadCommandException e) {
+					//TODO: print bad command raw message
+					System.out.println("BadCommandException at " + text);
+				}
+			} else {
+				try {
+					Sendable message = new TextMessage(properties.get("nickname", InetAddress.getLocalHost().toString()), text);
+					client.send(message);
+				} catch (UnknownHostException e) {
+					System.err.println("Couldn't find local address");
+					e.printStackTrace();
+					System.exit(1);
+				}
+			}
 		}
 	}
 

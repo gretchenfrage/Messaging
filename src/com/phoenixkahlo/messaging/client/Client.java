@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import com.phoenixkahlo.messaging.client.commands.ClientCommandExecuter;
 import com.phoenixkahlo.messaging.messagetypes.Message;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
@@ -12,20 +13,21 @@ import com.phoenixkahlo.messaging.utils.Protocol;
 
 /*
  * Represents a complete, runnable messaging client
- * Version 0002
+ * Version 0004
  */
 public class Client {
 	
-	public static final String DEFAULT_IP = "localhost";//"71.87.82.153";
-	public static final int DEFAULT_PORT = 39424;
+	public static final String DEFAULT_IP = "71.87.82.153";
+	public static final int DEFAULT_PORT = 39422;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
 	private SendableCoder coder;
 	private Socket socket;
 	private ClientListener listener;
-	private ClientFrame frame;
 	private PropertiesRepository properties;
+	private ClientCommandExecuter commandExecuter;
+	private ClientFrame frame;
 	
 	public static void main(String[] args) {
 		if (args.length == 1) {
@@ -46,8 +48,15 @@ public class Client {
 			relaunch("Failed to connect to server", e);
 		}
 		listener = new ClientListener(this, socket, coder);
-		frame = new ClientFrame(this);
-		properties = new PropertiesRepository();
+		try {
+			properties = new PropertiesRepository();
+		} catch (IOException e) {
+			System.err.println("Failed to create repository");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		commandExecuter = new ClientCommandExecuter(this);
+		frame = new ClientFrame(this, properties, commandExecuter);
 	}
 	
 	public void start() {
@@ -78,4 +87,8 @@ public class Client {
 		System.exit(0);
 	}
 
+	public PropertiesRepository getProperties() {
+		return properties;
+	}
+	
 }

@@ -29,6 +29,7 @@ public class ServerFrame extends JFrame {
 		// Wrap display area in scroll pane
 		JScrollPane scrollPane = new JScrollPane(displayArea);
 		scrollPane.setPreferredSize(new Dimension(500, 500));
+		scrollPane.getViewport().setBackground(Color.WHITE);
 		
 		// Add scroll pane
 		add(scrollPane);

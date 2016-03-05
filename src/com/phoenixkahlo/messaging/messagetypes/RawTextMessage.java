@@ -9,16 +9,15 @@ import javax.swing.JTextArea;
 
 import com.phoenixkahlo.messaging.utils.Protocol;
 
-public class TextMessage extends SourcedMessage {
+public class RawTextMessage extends Message {
 
 	private String text;
 	
-	public TextMessage(String name, String text) {
-		super(name);
+	public RawTextMessage(String text) {
 		this.text = text;
 	}
 	
-	public TextMessage(InputStream in) throws IOException {
+	public RawTextMessage(InputStream in) throws IOException {
 		super(in);
 		text = Protocol.readString(in);
 	}
@@ -28,10 +27,10 @@ public class TextMessage extends SourcedMessage {
 		super.write(out);
 		Protocol.writeString(text, out);
 	}
-
+	
 	@Override
 	public Component toComponent() {
-		JTextArea textArea = new JTextArea(getName() + " > " + text);
+		JTextArea textArea = new JTextArea(text);
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
@@ -43,5 +42,5 @@ public class TextMessage extends SourcedMessage {
 	public String toString() {
 		return super.toString() + text;
 	}
-
+	
 }
