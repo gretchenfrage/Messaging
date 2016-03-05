@@ -8,6 +8,9 @@ import com.phoenixkahlo.messaging.server.MessagingConnection;
 
 public interface Sendable {
 
+	/*
+	 * Does not encode header, and thus should only ever be called by SendableCoder
+	 */
 	void write(OutputStream out) throws IOException;
 	
 	void effectClient(Client client);

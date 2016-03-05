@@ -5,7 +5,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import com.phoenixkahlo.messaging.messagetypes.Message;
-import com.phoenixkahlo.messaging.messagetypes.MessageOld;
+import com.phoenixkahlo.messaging.messagetypes.Sendable;
+import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 import com.phoenixkahlo.messaging.utils.FileUtils;
 import com.phoenixkahlo.messaging.utils.Protocol;
 
@@ -15,14 +16,16 @@ import com.phoenixkahlo.messaging.utils.Protocol;
  */
 public class Client {
 	
-	public static final String DEFAULT_IP = "71.87.82.153";
+	public static final String DEFAULT_IP = "localhost";//"71.87.82.153";
 	public static final int DEFAULT_PORT = 39424;
 	
 	public static final boolean PRINT_DEBUG = false;
 	
+	private SendableCoder coder;
 	private Socket socket;
 	private ClientListener listener;
 	private ClientFrame frame;
+	private PropertiesRepository properties;
 	
 	public static void main(String[] args) {
 		if (args.length == 1) {
@@ -36,13 +39,15 @@ public class Client {
 	
 	public Client(String ip, int port) {
 		System.out.println("Constructing client");
+		coder = new SendableCoder();
 		try {
 			socket = new Socket(ip, port);
 		} catch (IOException e) {
 			relaunch("Failed to connect to server", e);
 		}
-		listener = new ClientListener(this, socket);
+		listener = new ClientListener(this, socket, coder);
 		frame = new ClientFrame(this);
+		properties = new PropertiesRepository();
 	}
 	
 	public void start() {
@@ -53,13 +58,13 @@ public class Client {
 	
 	public void recieveMessage(Message message) {
 		System.out.println(message);
-		frame.addMessage(message.toComponent());
+		frame.addComponent(message.toComponent());
 	}
 	
-	public void sendMessage(MessageOld message) {
+	public void send(Sendable sendable) {
 		try {
 			OutputStream out = socket.getOutputStream();
-			message.write(out);
+			coder.write(sendable, out);
 		} catch (IOException e) {
 			relaunch("Server disconnected", e);
 		}

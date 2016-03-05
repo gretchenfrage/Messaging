@@ -1,6 +1,7 @@
 package com.phoenixkahlo.messaging.server;
 import java.net.Socket;
 
+import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 import com.phoenixkahlo.messaging.utils.ConnectionFactory;
 
 /*
@@ -9,14 +10,16 @@ import com.phoenixkahlo.messaging.utils.ConnectionFactory;
 public class MessagingConnectionFactory implements ConnectionFactory {
 
 	private Server server;
+	private SendableCoder coder;
 
-	public MessagingConnectionFactory(Server server) {
+	public MessagingConnectionFactory(Server server, SendableCoder coder) {
 		this.server = server;
+		this.coder = coder;
 	}
 
 	@Override
 	public void createConnection(Socket socket) {
-		server.addConnection(new MessagingConnection(server, socket));
+		server.addConnection(new MessagingConnection(server, socket, coder));
 	}
 
 }

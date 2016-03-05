@@ -7,9 +7,8 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
-import org.jfree.ui.tabbedui.VerticalLayout;
-
 import com.phoenixkahlo.messaging.utils.ScrollablePanel;
+import com.phoenixkahlo.messaging.utils.VerticalLayout;
 
 public class ServerFrame extends JFrame {
 

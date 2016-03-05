@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.phoenixkahlo.messaging.messagetypes.Message;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
+import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 import com.phoenixkahlo.messaging.utils.Waiter;
 
 /*
@@ -12,8 +13,6 @@ import com.phoenixkahlo.messaging.utils.Waiter;
 public class Server {
 
 	public static final int DEFAULT_PORT = 39424;
-	
-	public static final boolean PRINT_DEBUG = false;
 	
 	public static void main(String[] args) {
 		if (args.length == 1) {
@@ -25,22 +24,24 @@ public class Server {
 		}
 	}
 
+	private SendableCoder coder;
 	private MessageRepository repository;
 	private Waiter waiter;
-	private HeartBeatSender heartBeat;
+	private HeartBeat heartBeat;
 	private ServerFrame frame;
-
+	
 	public Server(int port) {
-		repository = new MessageRepository();
-		waiter = new Waiter(new MessagingConnectionFactory(this), port);
-		heartBeat = new HeartBeatSender(this);
+		coder = new SendableCoder();
+		repository = new MessageRepository(coder);
+		waiter = new Waiter(new MessagingConnectionFactory(this, coder), port);
+		heartBeat = new HeartBeat(this);
 		frame = new ServerFrame();
 	}
 
 	public void start() {
-		for (MessageOld m : repository.getAllMessages()) {
+		for (Message m : repository.getAllMessages()) {
 			System.out.println(m);
-			frame.addMessage(m);
+			frame.add(m.toComponent());
 		}
 		waiter.start();
 		heartBeat.start();
@@ -55,7 +56,7 @@ public class Server {
 	 */
 	public void addConnection(MessagingConnection connection) {
 		connections.add(connection);
-		for (MessageOld m : repository.getAllMessages()) {
+		for (Message m : repository.getAllMessages()) {
 			connection.send(m);
 		}
 		connection.start();
@@ -63,7 +64,7 @@ public class Server {
 	}
 	
 	/*
-	 * Called upon by the connections themselves, after recieving an IOException as a result of disconnection
+	 * Called upon by the connections themselves, after receiving an IOException as a result of disconnection
 	 */
 	public void removeConnection(MessagingConnection connection) {
 		synchronized (connection) {
@@ -78,33 +79,18 @@ public class Server {
 	 */
 	public void send(Sendable sendable) {
 		for (int i = connections.size() - 1; i >= 0; i--) {
+			// Iterate backwards because MessagingConnection.send may lead program flow to Server.removeConnection
 			connections.get(i).send(sendable);
 		}
 	}
 	
 	/*
-	 * Called upon by MessagingConnection threads after recieving message from client
+	 * Called upon by MessagingConnection threads after receiving message from client
 	 */
 	public void recieveMessage(Message message) {
 		frame.addComponent(message.toComponent());
 		repository.addMessage(message);
 		send(message);
 	}
-	/*
-	public void createMessage(String message) {
-		Calendar calendar = Calendar.getInstance();
-		String hour = Integer.toString(calendar.get(Calendar.HOUR_OF_DAY));
-		String minute = Integer.toString(calendar.get(Calendar.MINUTE));
-		String second = Integer.toString(calendar.get(Calendar.SECOND));
-		if (hour.length() < 2) hour = "0" + hour;
-		if (minute.length() < 2) minute = "0" + minute;
-		if (second.length() < 2) second = "0" + second;
-		message = "[" + hour + ":" + minute + ":" + second + "] " + message;
-		System.out.println(message);
-		frame.println(message);
-		repository.addMessage(message);
-		sendMessage(message);
-	}
-	*/
 
 }

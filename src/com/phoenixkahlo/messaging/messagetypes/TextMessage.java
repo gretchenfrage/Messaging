@@ -37,10 +37,10 @@ public class TextMessage extends Message {
 		textArea.setOpaque(false);
 		return textArea;
 	}
-
+	
 	@Override
-	public int getHeader() {
-		return Protocol.TEXT_MESSAGE_HEADER;
+	public String toString() {
+		return getName() + " > " + text;
 	}
 
 }

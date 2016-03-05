@@ -63,4 +63,15 @@ public class BiMap<A, B> {
 		return null;
 	}
 	
+	@Override
+	public String toString() {
+		String out = "[";
+		for (int i = 0; i < pairs.size(); i++) {
+			out += pairs.get(i).a + ":" + pairs.get(i).b;
+			if (i < pairs.size() - 1) out += ", ";
+		}
+		out += "]";
+		return out;
+	}
+	
 }

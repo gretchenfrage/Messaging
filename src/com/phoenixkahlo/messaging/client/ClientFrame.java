@@ -13,11 +13,10 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.jfree.ui.tabbedui.VerticalLayout;
-
-import com.phoenixkahlo.messaging.messagetypes.ChatMessageOld;
-import com.phoenixkahlo.messaging.messagetypes.MessageOld;
+import com.phoenixkahlo.messaging.messagetypes.Sendable;
+import com.phoenixkahlo.messaging.messagetypes.TextMessage;
 import com.phoenixkahlo.messaging.utils.ScrollablePanel;
+import com.phoenixkahlo.messaging.utils.VerticalLayout;
 
 public class ClientFrame extends JFrame implements KeyListener {
 	
@@ -92,7 +91,7 @@ public class ClientFrame extends JFrame implements KeyListener {
 	public void keyPressed(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 			event.consume();
-			MessageOld message = new ChatMessageOld("", enterArea.getText());
+			Sendable message = new TextMessage("", enterArea.getText());
 			enterArea.setText("");
 			client.send(message);
 		}

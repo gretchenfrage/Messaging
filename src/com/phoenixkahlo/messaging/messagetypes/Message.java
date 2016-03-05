@@ -28,14 +28,11 @@ public abstract class Message implements Sendable {
 	
 	@Override
 	public void write(OutputStream out) throws IOException {
-		out.write(getHeader());
 		Protocol.writeString(name, out);
 		Protocol.writeString(ip, out);
 		writeContents(out);
 	}
-	
-	public abstract int getHeader();
-	
+		
 	public abstract void writeContents(OutputStream out) throws IOException;
 
 	@Override

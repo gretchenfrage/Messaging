@@ -15,18 +15,19 @@ public class MessagingConnection extends Thread {
 
 	private Server server;
 	private Socket socket;
-	private String senderName;
+	private SendableCoder coder;
 	private volatile boolean shouldContinueRunning = true;
 	
-	public MessagingConnection(Server server, Socket socket) {
+	public MessagingConnection(Server server, Socket socket, SendableCoder coder) {
 		super("Recieving thread for " + socket.getInetAddress());
 		this.server = server;
 		this.socket = socket;
-		senderName = socket.getInetAddress().toString();
+		this.coder = coder;
 	}
 	
 	public void terminate() {
 		shouldContinueRunning = false;
+		interrupt();
 	}
 
 	@Override
@@ -35,11 +36,8 @@ public class MessagingConnection extends Thread {
 		try {
 			InputStream in = socket.getInputStream();
 			while (shouldContinueRunning) {
-				// It is trusted that the client will never send a heartbeat
-				// The client has no reason to include a sender as it is overridden when recieving
-				MessageOld recieved = SendableCoder.readMessage(in);
-				recieved.setSender(senderName);
-				server.recieveMessage(recieved, getIP());
+				Sendable recieved = coder.read(in);
+				recieved.effectServer(this);
 			}
 		} catch (IOException e) {
 			System.out.println("Disconnected socket on connection: " + getIP());
@@ -50,7 +48,7 @@ public class MessagingConnection extends Thread {
 	public void send(Sendable sendable) {
 		try {
 			OutputStream out = socket.getOutputStream();
-			sendable.write(out);
+			coder.write(sendable, out);
 		} catch (IOException e) {
 			System.out.println("Disconnected socket on connection: " + getIP());
 			server.removeConnection(this);

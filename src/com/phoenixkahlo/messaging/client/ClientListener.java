@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-import com.phoenixkahlo.messaging.messagetypes.MessageOld;
+import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 
 /*
@@ -11,10 +11,12 @@ import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
  */
 public class ClientListener extends Thread {
 
+	private SendableCoder coder;
 	private Client client;
 	private Socket socket;
 	
-	public ClientListener(Client client, Socket socket) {
+	public ClientListener(Client client, Socket socket, SendableCoder coder) {
+		this.coder = coder;
 		this.client = client;
 		this.socket = socket;
 	}
@@ -25,8 +27,8 @@ public class ClientListener extends Thread {
 		try {
 			InputStream in = socket.getInputStream();
 			while (true) {
-				MessageOld message = SendableCoder.readMessage(in);
-				if (message != null) client.recieveMessage(message);
+				Sendable received = coder.read(in);
+				received.effectClient(client);
 			}
 		} catch (IOException e) {
 			Client.relaunch("Server disconnected", e);
