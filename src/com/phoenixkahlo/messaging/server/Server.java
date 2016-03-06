@@ -2,8 +2,10 @@ package com.phoenixkahlo.messaging.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.phoenixkahlo.messaging.messagetypes.DisplayClientFrameCommand;
 import com.phoenixkahlo.messaging.messagetypes.Message;
 import com.phoenixkahlo.messaging.messagetypes.RawTextMessage;
+import com.phoenixkahlo.messaging.messagetypes.RelaunchClientCommand;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 import com.phoenixkahlo.messaging.utils.Waiter;
@@ -44,7 +46,15 @@ public class Server {
 			System.out.println(m);
 			frame.addComponent(m.toComponent());
 		}
+		frame.scrollToBottom();
 		waiter.start();
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				waiter.terminate(); // Make sure the relaunched clients don't reconnect to this server before finished closing
+				send(new RelaunchClientCommand());
+			}
+		}, "Shutdown hook thread"));
 		heartBeat.start();
 		frame.start();
 		System.out.println("~~~ MESSAGING SERVER STARTED~~~");
@@ -53,26 +63,26 @@ public class Server {
 	private List<MessagingConnection> connections = new ArrayList<MessagingConnection>();
 
 	/*
-	 * Called upon by waiter thread when new connections are accepted
+	 * Called upon by the connections themselves, after receiving ConnectionActivator
 	 */
-	public void addConnection(MessagingConnection connection) {
+	public void activateConnection(MessagingConnection connection) {
 		connections.add(connection);
 		for (Message m : repository.getAllMessages()) {
 			connection.send(m);
 		}
-		connection.start();
-		recieveMessage(new RawTextMessage(connection.getIP() + " joined the chat"));
+		connection.send(new DisplayClientFrameCommand());
+		recieveMessage(new RawTextMessage(connection.getNickname() + " joined the chat"));
 	}
 	
 	/*
-	 * Called upon by the connections themselves, after receiving an IOException as a result of disconnection
+	 * Called upon by the connections themselves, after receiving a ConnectionDeactivator or IOException
 	 */
-	public void removeConnection(MessagingConnection connection) {
+	public void deactivateConnection(MessagingConnection connection) {
 		synchronized (connection) {
 			connections.remove(connection);
 			connection.terminate();
 		}
-		recieveMessage(new RawTextMessage(connection.getIP() + " left the chat"));
+		recieveMessage(new RawTextMessage(connection.getNickname() + " left the chat"));
 	}
 
 	/*

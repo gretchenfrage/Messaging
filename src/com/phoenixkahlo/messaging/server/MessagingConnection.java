@@ -17,12 +17,14 @@ public class MessagingConnection extends Thread {
 	private Socket socket;
 	private SendableCoder coder;
 	private volatile boolean shouldContinueRunning = true;
+	private String nickname; // Nickname is cached on server, although client is ultimate determinator
 	
 	public MessagingConnection(Server server, Socket socket, SendableCoder coder) {
 		super("Recieving thread for " + socket.getInetAddress());
 		this.server = server;
 		this.socket = socket;
 		this.coder = coder;
+		nickname = getIP();
 	}
 	
 	public void terminate() {
@@ -41,7 +43,7 @@ public class MessagingConnection extends Thread {
 			}
 		} catch (IOException e) {
 			System.out.println("Disconnected socket on connection: " + getIP());
-			server.removeConnection(this);
+			server.deactivateConnection(this);
 		}
 	}
 	
@@ -51,7 +53,7 @@ public class MessagingConnection extends Thread {
 			coder.write(sendable, out);
 		} catch (IOException e) {
 			System.out.println("Disconnected socket on connection: " + getIP());
-			server.removeConnection(this);
+			server.deactivateConnection(this);
 		}
 	}
 	
@@ -61,6 +63,14 @@ public class MessagingConnection extends Thread {
 	
 	public Server getServer() {
 		return server;
+	}
+	
+	public String getNickname() {
+		return nickname;
+	}
+	
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 }

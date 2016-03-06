@@ -5,7 +5,10 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import com.phoenixkahlo.messaging.client.commands.ClientCommandExecuter;
+import com.phoenixkahlo.messaging.messagetypes.ActivateConnectionCommand;
+import com.phoenixkahlo.messaging.messagetypes.DeactivateConnectionCommand;
 import com.phoenixkahlo.messaging.messagetypes.Message;
+import com.phoenixkahlo.messaging.messagetypes.NicknameChange;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 import com.phoenixkahlo.messaging.utils.FileUtils;
@@ -13,15 +16,13 @@ import com.phoenixkahlo.messaging.utils.Protocol;
 
 /*
  * Represents a complete, runnable messaging client
- * Version 0004
+ * Version 0007
  */
 public class Client {
 	
 	public static final String DEFAULT_IP = "71.87.82.153";
 	public static final int DEFAULT_PORT = 39422;
-	
-	public static final boolean PRINT_DEBUG = false;
-	
+		
 	private SendableCoder coder;
 	private Socket socket;
 	private ClientListener listener;
@@ -45,7 +46,7 @@ public class Client {
 		try {
 			socket = new Socket(ip, port);
 		} catch (IOException e) {
-			relaunch("Failed to connect to server", e);
+			relaunch();
 		}
 		listener = new ClientListener(this, socket, coder);
 		try {
@@ -60,8 +61,16 @@ public class Client {
 	}
 	
 	public void start() {
+		if (properties.get("nickname") != null)
+			send(new NicknameChange(properties.get("nickname")));
+		send(new ActivateConnectionCommand());
 		listener.start();
-		frame.start();
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				send(new DeactivateConnectionCommand());
+			}
+		}, "Shutdown hook thread"));
 		System.out.println("~~~ MESSAGING CLIENT STARTED ~~~");
 	}
 	
@@ -74,14 +83,14 @@ public class Client {
 		try {
 			OutputStream out = socket.getOutputStream();
 			coder.write(sendable, out);
+			frame.scrollToBottom();
+			System.out.println("SENDABLE SENT: " + sendable);
 		} catch (IOException e) {
-			relaunch("Server disconnected", e);
+			relaunch();
 		}
 	}
 	
-	public static void relaunch(String reason, Exception exception) {
-		System.out.println(reason);
-		exception.printStackTrace();
+	public static void relaunch() {
 		File launcher = new File(FileUtils.getAppDirPath(Protocol.APP_DIR_NAME + File.separator + "LAUNCHER.jar"));
 		FileUtils.launchJar(launcher);
 		System.exit(0);
@@ -89,6 +98,10 @@ public class Client {
 
 	public PropertiesRepository getProperties() {
 		return properties;
+	}
+	
+	public ClientFrame getFrame() {
+		return frame;
 	}
 	
 }

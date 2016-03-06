@@ -15,6 +15,11 @@ public class SendableCoder {
 	public static final int TEXT_MESSAGE_HEADER = 0;
 	public static final int PULSE_HEADER = 1;
 	public static final int RAW_TEXT_MESSAGE_HEADER = 2;
+	public static final int NICKNAME_CHANGE_HEADER = 3;
+	public static final int ACTIVATE_CONNECTION_COMMAND = 4;
+	public static final int DEACTIVATE_CONNECTION_COMMAND = 5;
+	public static final int DISPLAY_CLIENT_FRAME_COMMAND = 6;
+	public static final int RELAUNCH_CLIENT_COMMAND = 7;
 	
 	private BiMap<Integer, Class<? extends Sendable>> map = new BiMap<Integer, Class<? extends Sendable>>();
 	
@@ -22,6 +27,11 @@ public class SendableCoder {
 		map.link(TEXT_MESSAGE_HEADER, TextMessage.class);
 		map.link(PULSE_HEADER, Pulse.class);
 		map.link(RAW_TEXT_MESSAGE_HEADER, RawTextMessage.class);
+		map.link(NICKNAME_CHANGE_HEADER, NicknameChange.class);
+		map.link(ACTIVATE_CONNECTION_COMMAND, ActivateConnectionCommand.class);
+		map.link(DEACTIVATE_CONNECTION_COMMAND, DeactivateConnectionCommand.class);
+		map.link(DISPLAY_CLIENT_FRAME_COMMAND, DisplayClientFrameCommand.class);
+		map.link(RELAUNCH_CLIENT_COMMAND, RelaunchClientCommand.class);
 	}
 	
 	public Sendable read(InputStream in) throws IOException {

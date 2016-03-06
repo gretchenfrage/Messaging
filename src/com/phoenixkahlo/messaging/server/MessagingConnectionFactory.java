@@ -19,7 +19,8 @@ public class MessagingConnectionFactory implements ConnectionFactory {
 
 	@Override
 	public void createConnection(Socket socket) {
-		server.addConnection(new MessagingConnection(server, socket, coder));
+		MessagingConnection connection = new MessagingConnection(server, socket, coder);
+		connection.start();
 	}
 
 }

@@ -31,7 +31,7 @@ public class ClientListener extends Thread {
 				received.effectClient(client);
 			}
 		} catch (IOException e) {
-			Client.relaunch("Server disconnected", e);
+			Client.relaunch();
 		}
 	}
 	

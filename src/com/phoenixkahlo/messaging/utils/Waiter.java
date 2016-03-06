@@ -9,6 +9,7 @@ public class Waiter extends Thread {
 
 	private ConnectionFactory connectionFactory;
 	private ServerSocket serverSocket;
+	private volatile boolean shouldContinueRunning = true;
 
 	public Waiter(ConnectionFactory connectionFactory, int port) {
 		super("Waiter thread");
@@ -23,10 +24,15 @@ public class Waiter extends Thread {
 		}
 	}
 
+	public void terminate() {
+		shouldContinueRunning = false;
+		interrupt();
+	}
+	
 	@Override
 	public void run() {
 		System.out.println("Waiter waiting");
-		while (true) {
+		while (shouldContinueRunning) {
 			try {
 				connectionFactory.createConnection(serverSocket.accept());
 			} catch (IOException e) {

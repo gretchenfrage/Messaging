@@ -32,7 +32,6 @@ public class ClientFrame extends JFrame implements KeyListener {
 	
 	private ScrollablePanel displayArea;
 	private JTextArea enterArea;
-	@SuppressWarnings("unused") // For later implementation of autoscrolling
 	private JScrollBar scrollBar;
 	
 	public ClientFrame(Client client, PropertiesRepository properties, ClientCommandExecuter commandExecuter) {
@@ -84,17 +83,26 @@ public class ClientFrame extends JFrame implements KeyListener {
 		pack();
 		setLocationRelativeTo(null);
 	}
-	
+
 	public void start() {
 		setVisible(true);
+		scrollToBottom();
 	}
 	
 	public void addComponent(Component component) {
+		boolean isGluedToBottom = scrollBar.getValue() + scrollBar.getModel().getExtent() == scrollBar.getMaximum();
+		
 		displayArea.add(component);
-		displayArea.revalidate();
+		revalidate();
 		displayArea.repaint();
+		
+		if (isGluedToBottom) scrollToBottom();
 	}
 
+	public void scrollToBottom() {
+		scrollBar.setValue(scrollBar.getMaximum());
+	}
+	
 	@Override
 	public void keyPressed(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.VK_ENTER) {
