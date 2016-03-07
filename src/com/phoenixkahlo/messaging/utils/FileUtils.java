@@ -1,7 +1,9 @@
 package com.phoenixkahlo.messaging.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 
 public class FileUtils {
@@ -50,6 +52,12 @@ public class FileUtils {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+	
+	public static byte[] toBytes(String path) throws IOException {
+		File file = new File(path);
+		InputStream in = new FileInputStream(file);
+		return Protocol.readByteArray(in);
 	}
 	
 }

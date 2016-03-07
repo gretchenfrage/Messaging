@@ -1,4 +1,5 @@
 package com.phoenixkahlo.messaging.server;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import com.phoenixkahlo.messaging.messagetypes.RawTextMessage;
 import com.phoenixkahlo.messaging.messagetypes.RelaunchClientCommand;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
+import com.phoenixkahlo.messaging.utils.FileUtils;
+import com.phoenixkahlo.messaging.utils.ResourceRepository;
 import com.phoenixkahlo.messaging.utils.Waiter;
 
 /*
@@ -28,21 +31,29 @@ public class Server {
 	}
 
 	private SendableCoder coder;
-	private MessageRepository repository;
+	private MessageRepository messageRepository;
 	private Waiter waiter;
 	private HeartBeat heartBeat;
 	private ServerFrame frame;
+	private ResourceRepository resourceRespository;
 	
 	public Server(int port) {
 		coder = new SendableCoder();
-		repository = new MessageRepository(coder);
+		messageRepository = new MessageRepository(coder);
 		waiter = new Waiter(new MessagingConnectionFactory(this, coder), port);
 		heartBeat = new HeartBeat(this);
 		frame = new ServerFrame();
+		try {
+			resourceRespository = new ResourceRepository(FileUtils.getParallelPath("resources"), coder);
+		} catch (IOException e) {
+			System.err.println("Failed to create resource repository");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	public void start() {
-		for (Message m : repository.getAllMessages()) {
+		for (Message m : messageRepository.getAllMessages()) {
 			System.out.println(m);
 			frame.addComponent(m.toComponent());
 		}
@@ -67,7 +78,7 @@ public class Server {
 	 */
 	public void activateConnection(MessagingConnection connection) {
 		connections.add(connection);
-		for (Message m : repository.getAllMessages()) {
+		for (Message m : messageRepository.getAllMessages()) {
 			connection.send(m);
 		}
 		connection.send(new DisplayClientFrameCommand());
@@ -101,8 +112,12 @@ public class Server {
 	public void recieveMessage(Message message) {
 		System.out.println(message);
 		frame.addComponent(message.toComponent());
-		repository.addMessage(message);
+		messageRepository.addMessage(message);
 		send(message);
+	}
+	
+	public ResourceRepository getResourceRepository() {
+		return resourceRespository;
 	}
 
 }
