@@ -14,15 +14,17 @@ import com.phoenixkahlo.messaging.server.MessagingConnection;
 import com.phoenixkahlo.messaging.utils.Protocol;
 
 /*
- * Represents sendables that can be displayed in the chat and have a timestamp
+ * Represents Sendables that can be displayed in the chat and have a timestamp
  * Represents messages that come from a particular client and have a name, ip, and timestamp
+ * Any subclass of message should be backwards compatible with the data stream version of itself,
+ * as they will be stored long term on the server side
  */
 public abstract class Message implements Sendable {
 
 	private String timestamp;
 	
 	/*
-	 * When first constucted, sets time to current time
+	 * When first constructed, sets time to current time
 	 */
 	public Message() {
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -36,8 +38,8 @@ public abstract class Message implements Sendable {
 	}
 	
 	/*
-	 * Should always be overridden
-	 * Although it would not actually break the app if it wasn't
+	 * Should always be overridden and immediately called with super.write(out)
+	 * Although it would not actually break the app if it weren't
 	 */
 	@Override
 	public void write(OutputStream out) throws IOException {

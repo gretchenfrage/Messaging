@@ -1,4 +1,4 @@
-package com.phoenixkahlo.messaging.utils;
+package com.phoenixkahlo.messaging.swingutils;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;

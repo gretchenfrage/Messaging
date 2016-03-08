@@ -20,6 +20,7 @@ public class ClientLauncherFrame extends JFrame {
 		getContentPane().add(label);
 		setSize(300, 100);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		textChangingThread = new Thread(new Runnable() {
 			@Override

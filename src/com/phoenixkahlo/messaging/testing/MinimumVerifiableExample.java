@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import com.phoenixkahlo.messaging.utils.VerticalLayout;
+import com.phoenixkahlo.messaging.swingutils.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class MinimumVerifiableExample extends JFrame {

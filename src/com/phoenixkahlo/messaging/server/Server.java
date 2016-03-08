@@ -110,7 +110,7 @@ public class Server {
 	 * Called upon by MessagingConnection threads after receiving message from client
 	 */
 	public void recieveMessage(Message message) {
-		System.out.println(message);
+		System.out.println("Server received: " + message);
 		frame.addComponent(message.toComponent());
 		messageRepository.addMessage(message);
 		send(message);

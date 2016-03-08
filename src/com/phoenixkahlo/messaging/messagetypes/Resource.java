@@ -8,7 +8,6 @@ import java.util.Random;
 import com.phoenixkahlo.messaging.client.Client;
 import com.phoenixkahlo.messaging.server.MessagingConnection;
 import com.phoenixkahlo.messaging.utils.Protocol;
-import com.phoenixkahlo.messaging.utils.ResourceRepository;
 
 /*
  * Represents a resource that may be stored in a ResourceRepository

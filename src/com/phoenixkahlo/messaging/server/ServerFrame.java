@@ -8,8 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
-import com.phoenixkahlo.messaging.utils.ScrollablePanel;
-import com.phoenixkahlo.messaging.utils.VerticalLayout;
+import com.phoenixkahlo.messaging.swingutils.ScrollablePanel;
+import com.phoenixkahlo.messaging.swingutils.VerticalLayout;
 
 public class ServerFrame extends JFrame {
 

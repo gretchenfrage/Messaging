@@ -21,7 +21,7 @@ import com.phoenixkahlo.messaging.utils.ResourceRepository;
  */
 public class Client {
 	
-	public static final String DEFAULT_IP = "71.87.82.153";
+	public static final String DEFAULT_IP = "localhost";//"71.87.82.153";
 	public static final int DEFAULT_PORT = 39422;
 		
 	private SendableCoder coder;

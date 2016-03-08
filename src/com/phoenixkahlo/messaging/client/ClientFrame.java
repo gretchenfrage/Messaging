@@ -19,8 +19,8 @@ import com.phoenixkahlo.messaging.client.commands.BadCommandException;
 import com.phoenixkahlo.messaging.client.commands.ClientCommandExecuter;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.TextMessage;
-import com.phoenixkahlo.messaging.utils.ScrollablePanel;
-import com.phoenixkahlo.messaging.utils.VerticalLayout;
+import com.phoenixkahlo.messaging.swingutils.ScrollablePanel;
+import com.phoenixkahlo.messaging.swingutils.VerticalLayout;
 
 public class ClientFrame extends JFrame implements KeyListener {
 	

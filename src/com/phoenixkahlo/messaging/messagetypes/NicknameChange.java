@@ -35,7 +35,15 @@ public class NicknameChange implements Sendable {
 
 	@Override
 	public void effectServer(MessagingConnection connection) {
-		connection.setNickname(nickname);
+		String oldName = connection.getNickname();
+		String newName;
+		if (nickname.isEmpty()) {
+			newName = connection.getIP();
+		} else {
+			newName = nickname;
+		}
+		connection.getServer().recieveMessage(new RawTextMessage(oldName + " changed name to " + newName));
+		connection.setNickname(newName);
 	}
 
 }
