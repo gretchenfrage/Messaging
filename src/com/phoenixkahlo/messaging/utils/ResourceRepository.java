@@ -6,6 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.phoenixkahlo.messaging.messagetypes.Resource;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
@@ -18,12 +22,26 @@ public class ResourceRepository {
 
 	private SendableCoder coder;
 	private String dirPath;
+	// The following threads are waiting to be called once the resources with the given ID are present
+	private Map<String, List<Thread>> waiting = new HashMap<String, List<Thread>>();
 	
 	public ResourceRepository(String dirPath, SendableCoder coder) throws IOException {
 		this.coder = coder;
 		this.dirPath = dirPath;
 		File dir = new File(dirPath);
 		dir.mkdirs();
+	}
+	
+	public void waitFor(Thread callback, String resourceID) {
+		synchronized (waiting) {
+			if (resourceExists(resourceID)) { // Resource already exists, run immediately
+				callback.start();
+			} else { // Resource does not exist, run later
+				if (!waiting.containsKey(resourceID))
+					waiting.put(resourceID, new ArrayList<Thread>());
+				waiting.get(resourceID).add(callback);
+			}
+		}
 	}
 	
 	public void addResource(Resource resource) {
@@ -37,8 +55,25 @@ public class ResourceRepository {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		synchronized (waiting) {
+			if (waiting.containsKey(resource.getResourceID())) {
+				for (Thread thread : waiting.get(resource.getResourceID())) {
+					thread.start();
+				}
+				waiting.remove(resource.getResourceID());
+			}
+		}
 	}
 	
+	public boolean resourceExists(String resourceID) {
+		File file = new File(dirPath + File.separator + resourceID);
+		return file.exists();
+	}
+	
+	/*
+	 * Assumes resource exists, will crash if it doesn't
+	 * Should be called after calling resourceExists to ensure exists
+	 */
 	public Resource getResource(String resourceID) {
 		File file = new File(dirPath + File.separator + resourceID);
 		try {

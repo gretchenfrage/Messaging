@@ -1,7 +1,11 @@
 package com.phoenixkahlo.messaging.messagetypes;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.imageio.ImageIO;
 
 import com.phoenixkahlo.messaging.utils.FileUtils;
 
@@ -18,6 +22,10 @@ public class ImageResource extends Resource {
 	@Override
 	public String getExtension() {
 		return "png";
+	}
+	
+	public BufferedImage getImage() throws IOException {
+		return ImageIO.read(new ByteArrayInputStream(getData()));
 	}
 	
 }

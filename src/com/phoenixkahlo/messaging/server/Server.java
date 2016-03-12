@@ -119,5 +119,9 @@ public class Server {
 	public ResourceRepository getResourceRepository() {
 		return resourceRespository;
 	}
+	
+	public ServerFrame getFrame() {
+		return frame;
+	}
 
 }

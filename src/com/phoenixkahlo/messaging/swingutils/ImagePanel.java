@@ -8,66 +8,42 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
 
-public class ImagePanel extends JPanel{
+public class ImagePanel extends ScrollablePanel {
 
 	private static final long serialVersionUID = -7641525774844957585L;
-	
+
 	private BufferedImage image;
 
-    public ImagePanel(File file) throws IOException {
-         image = ImageIO.read(file);
-    }
-    
-    
-    
-    @Override
+	public ImagePanel(File image) throws IOException {
+		this.image = ImageIO.read(image);
+	}
+	
+	public ImagePanel(BufferedImage image) throws IOException {
+		this.image = image;
+	}
+	
+	public int widthToHeight(int width) {
+		return (int) ((double) width / image.getWidth() * image.getHeight());
+	}
+	
+	public int heightToWidth(int height) {
+		return (int) ((double) height / image.getHeight() * image.getWidth());
+	}
+	
+	@Override
 	public Dimension getPreferredSize() {
-    	//return new Dimension(image.getWidth(), image.getHeight());
-    	return super.getPreferredSize();
-    	
+		return new Dimension(image.getWidth(), image.getHeight());
 	}
-
-
-
+	
 	@Override
-	public Dimension getMaximumSize() {
-		// TODO Auto-generated method stub
-		return super.getMaximumSize();
-	}
-
-
-
-	@Override
-	public Dimension getMinimumSize() {
-		// TODO Auto-generated method stub
-		return super.getMinimumSize();
-	}
-
-
-
-	@Override
-	public int getWidth() {
-		//return super.getWidth();
-		return image.getWidth();
-	}
-
-
-
-	@Override
-	public int getHeight() {
-		//return super.getHeight();
-		return image.getHeight();
-	}
-
-
-
-	@Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        //g.drawImage(image, 0, 0, null);   
-        g.drawImage(image, 0, 0, 100, 100, Color.BLUE, null);
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        if (getWidth() < heightToWidth(getHeight())) { // If the panel width might be limiting the draw size
+        	graphics.drawImage(image, 0, 0, getWidth(), widthToHeight(getWidth()), Color.WHITE, null);
+        } else { // If the panel height might be limiting the draw size
+        	graphics.drawImage(image, 0, 0, heightToWidth(getHeight()), getHeight(), Color.WHITE, null);
+        }
     }
 	
 }
