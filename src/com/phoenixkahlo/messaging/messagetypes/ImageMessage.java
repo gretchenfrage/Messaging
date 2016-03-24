@@ -11,9 +11,9 @@ import javax.swing.JPanel;
 import com.phoenixkahlo.messaging.swingutils.SizeLimitedImagePanel;
 import com.phoenixkahlo.messaging.utils.IntCallback;
 import com.phoenixkahlo.messaging.utils.Protocol;
-import com.phoenixkahlo.messaging.utils.ResourceRepository;
+import com.phoenixkahlo.messaging.utils.ResourceRepositoryOld;
 
-public class ImageMessage extends ResourceReadyMessage {
+public class ImageMessage extends ResourceReadyMessageOld {
 
 	private String resourceID;
 	private IntCallback widthLimiter;
@@ -37,7 +37,7 @@ public class ImageMessage extends ResourceReadyMessage {
 	@Override
 	public Component toComponent() {
 		JPanel wrapper = new JPanel();
-		ResourceRepository repository = getResourceRepository();
+		ResourceRepositoryOld repository = getResourceRepository();
 		repository.waitFor(new Thread(new Runnable() {
 			@Override
 			public void run() {

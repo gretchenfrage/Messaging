@@ -10,29 +10,44 @@ import com.phoenixkahlo.messaging.server.MessagingConnection;
 import com.phoenixkahlo.messaging.utils.Protocol;
 
 /*
- * Represents a resource that may be stored in a ResourceRepository
+ * Represents a resource containing sizable amounts of data that will be cached on the hard drive on both
+ * the client and server sides and sent through the Internet on an as-needed basis.
+ * Subclasses are responsible for reading and writing actual data.
  */
 public abstract class Resource implements Sendable {
 	
 	/*
-	 * Is left blank when created by client, to be assigned when reaching the server
+	 * IDs should not include file extensions, that should be handled by the ResourceRepository
 	 */
 	private String resourceID;
-	private byte[] data;
 	
-	public Resource(byte[] data) {
-		resourceID = getResourceID() + "." + getExtension();
-		this.data = data;
+	public Resource() {
+		resourceID = createResourceID();
 	}
 	
 	public Resource(InputStream in) throws IOException {
 		resourceID = Protocol.readString(in);
-		data = Protocol.readByteArray(in);
 	}
 	
-	/*
-	 * Does not return extension
-	 */
+	@Override
+	public void write(OutputStream out) throws IOException {
+		Protocol.writeString(resourceID, out);
+	}
+	
+	@Override
+	public void effectClient(Client client) {
+		//TODO: implement
+	}
+	
+	@Override
+	public void effectServer(MessagingConnection connection) {
+		//TODO: implement
+	}
+	
+	public String getResourceID() {
+		return resourceID;
+	}
+	
 	public static String createResourceID() {
 		StringBuilder out = new StringBuilder();
 		char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".toCharArray();
@@ -41,32 +56,6 @@ public abstract class Resource implements Sendable {
 			out.append(chars[random.nextInt(chars.length)]);
 		}
 		return out.toString();
-	}
-	
-	public abstract String getExtension();
-	
-	@Override
-	public void write(OutputStream out) throws IOException {
-		Protocol.writeString(resourceID, out);
-		Protocol.writeByteArray(data, out);
-	}
-	
-	@Override
-	public void effectClient(Client client) {
-		client.getResourceRepository().addResource(this);
-	}
-	
-	@Override
-	public void effectServer(MessagingConnection connection) {
-		connection.getServer().getResourceRepository().addResource(this);
-	}
-	
-	public String getResourceID() {
-		return resourceID;
-	}
-	
-	public byte[] getData() {
-		return data;
 	}
 	
 }

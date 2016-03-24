@@ -6,25 +6,25 @@ import java.io.InputStream;
 import com.phoenixkahlo.messaging.client.Client;
 import com.phoenixkahlo.messaging.server.MessagingConnection;
 import com.phoenixkahlo.messaging.utils.IntCallback;
-import com.phoenixkahlo.messaging.utils.ResourceRepository;
+import com.phoenixkahlo.messaging.utils.ResourceRepositoryOld;
 
 /*
  * Provides access to the ResourceRepository and frame width-getter callback, whether on Client or Server
  */
-public abstract class ResourceReadyMessage extends SourcedMessage {
+public abstract class ResourceReadyMessageOld extends SourcedMessage {
 
-	private ResourceRepository repository;
+	private ResourceRepositoryOld repository;
 	private IntCallback frameWidthGetter;
 	
-	public ResourceReadyMessage(String name) {
+	public ResourceReadyMessageOld(String name) {
 		super(name);
 	}
 
-	public ResourceReadyMessage(InputStream in) throws IOException {
+	public ResourceReadyMessageOld(InputStream in) throws IOException {
 		super(in);
 	}
 
-	public ResourceRepository getResourceRepository() {
+	public ResourceRepositoryOld getResourceRepository() {
 		return repository;
 	}
 

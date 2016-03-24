@@ -10,7 +10,7 @@ import com.phoenixkahlo.messaging.messagetypes.RelaunchClientCommand;
 import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 import com.phoenixkahlo.messaging.utils.FileUtils;
-import com.phoenixkahlo.messaging.utils.ResourceRepository;
+import com.phoenixkahlo.messaging.utils.ResourceRepositoryOld;
 import com.phoenixkahlo.messaging.utils.Waiter;
 
 /*
@@ -35,7 +35,7 @@ public class Server {
 	private Waiter waiter;
 	private HeartBeat heartBeat;
 	private ServerFrame frame;
-	private ResourceRepository resourceRespository;
+	private ResourceRepositoryOld resourceRespository;
 	
 	public Server(int port) {
 		coder = new SendableCoder();
@@ -44,7 +44,7 @@ public class Server {
 		heartBeat = new HeartBeat(this);
 		frame = new ServerFrame();
 		try {
-			resourceRespository = new ResourceRepository(FileUtils.getParallelPath("resources"), coder);
+			resourceRespository = new ResourceRepositoryOld(FileUtils.getParallelPath("resources"), coder);
 		} catch (IOException e) {
 			System.err.println("Failed to create resource repository");
 			e.printStackTrace();
@@ -116,7 +116,7 @@ public class Server {
 		send(message);
 	}
 	
-	public ResourceRepository getResourceRepository() {
+	public ResourceRepositoryOld getResourceRepository() {
 		return resourceRespository;
 	}
 	

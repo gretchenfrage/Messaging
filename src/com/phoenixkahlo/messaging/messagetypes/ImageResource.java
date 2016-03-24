@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 
 import com.phoenixkahlo.messaging.utils.FileUtils;
 
-public class ImageResource extends Resource {
+public class ImageResource extends ResourceOld {
 	
 	public ImageResource(String path) throws IOException {
 		super(FileUtils.toBytes(path));

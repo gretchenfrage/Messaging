@@ -13,7 +13,7 @@ import com.phoenixkahlo.messaging.messagetypes.Sendable;
 import com.phoenixkahlo.messaging.messagetypes.SendableCoder;
 import com.phoenixkahlo.messaging.utils.FileUtils;
 import com.phoenixkahlo.messaging.utils.Protocol;
-import com.phoenixkahlo.messaging.utils.ResourceRepository;
+import com.phoenixkahlo.messaging.utils.ResourceRepositoryOld;
 
 /*
  * Represents a complete, runnable messaging client
@@ -30,7 +30,7 @@ public class Client {
 	private PropertiesRepository properties;
 	private ClientCommandExecuter commandExecuter;
 	private ClientFrame frame;
-	private ResourceRepository resourceRepository;
+	private ResourceRepositoryOld resourceRepository;
 	
 	public static void main(String[] args) {
 		if (args.length == 1) {
@@ -61,7 +61,7 @@ public class Client {
 		commandExecuter = new ClientCommandExecuter(this);
 		frame = new ClientFrame(this, properties, commandExecuter);
 		try {
-			resourceRepository = new ResourceRepository(FileUtils.getAppDirPath(Protocol.APP_DIR_NAME + File.separator + "resources"), coder);
+			resourceRepository = new ResourceRepositoryOld(FileUtils.getAppDirPath(Protocol.APP_DIR_NAME + File.separator + "resources"), coder);
 		} catch (IOException e) {
 			System.err.println("Failed to create resource repository");
 			e.printStackTrace();
@@ -113,7 +113,7 @@ public class Client {
 		return frame;
 	}
 	
-	public ResourceRepository getResourceRepository() {
+	public ResourceRepositoryOld getResourceRepository() {
 		return resourceRepository;
 	}
 	
